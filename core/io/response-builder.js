@@ -87,9 +87,5 @@ function ResponseBuilder() {
             }
         }
         this.p.tos = util.arrayRemoveItems(this.p.tos, this.p.toExpections);
-        console.log("p.tos", this.p.tos);
-        this.p.tos.forEach(function (session) {
-
-        });
     };
 }

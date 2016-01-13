@@ -1,7 +1,11 @@
 module.exports = HomeController;
 function HomeController() {
     this.index = function (response) {
-        var responseData = "hello world";
+        // set session
+        response.session.set("message", "hello world");
+        // get session
+        var responseData = response.session.get("message", "defaultValue");
+        // respond
         response.status(200).header("Content-Length", responseData.length).make(responseData);
     };
     this.login = function (response) {

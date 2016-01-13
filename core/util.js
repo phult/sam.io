@@ -99,7 +99,7 @@ function Util() {
      * @returns {Array.prototype.remove.retval|Array@call;concat}
      */
     this.arrayRemoveItems = function (arr, removedItems) {
-        var retval = arr.concat();
+        var retval = arr;
         for (var i = 0; i < removedItems.length; ++i) {
             for (var j = 0; j < retval.length; ++j) {
                 if (removedItems[i] === retval[j]) {

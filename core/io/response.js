@@ -42,8 +42,6 @@ function Response(routeName, sessionManager) {
         var self = this;
         this.header("Content-Type", "application/json");
         this.build();
-        this.p.a++;
-        console.log("a", this.p.a);
         this.p.tos.forEach(function (session) {
             session.socket.emit(self.p.toEvent, data);
         });

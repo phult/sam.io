@@ -1,31 +1,34 @@
 // core modules
-var utils = require('./cores/util');
-var httpServer = require('./cores/net/http-server');
-var controllerLoader = require('./cores/loader/controller-loader');
-var routerLoader = require('./cores/loader/route-loader');
-var httpConnection = require('./cores/net/http-connection');
-var socketIOConnection = require('./cores/net/socket-io-connection');
+var util = require('./core/util');
+var sessionManager = require('./core/session/session-manager');
+var httpServer = require('./core/net/http-server');
+var controllerLoader = require('./core/loader/controller-loader');
+var routerLoader = require('./core/loader/route-loader');
+var httpConnection = require('./core/net/http-connection');
+var socketIOConnection = require('./core/net/socket-io-connection');
 // config for start
 var controllers = require('./start/controllers');
 var routes = require('./start/routes');
 // config files
 var appCfg = require('./config/app');
+var sessionCfg = require('./config/session');
 
 var Adu = function () {
     this.start = function () {
+        sessionManager.start(sessionCfg);
         controllerLoader.loadConfigFile(controllers);
         httpConnection.listen(httpServer);
-        socketIOConnection.listen(httpServer);
-        routerLoader.load(controllerLoader, httpConnection, socketIOConnection);
+        socketIOConnection.listen(httpServer, sessionManager);
+        routerLoader.load(controllerLoader, httpConnection, socketIOConnection, sessionManager);
         routes(routerLoader);
-        httpServer.listen(appCfg.port);
-        utils.log("=============================================================");
-        utils.log("Adu: live to fight!");
-        utils.log("-------------------------------------------------------------");
-        utils.log("- " + utils.now());
-        utils.log("- port: " + appCfg.port);
-        utils.log("- debug: " + appCfg.debug);
-        utils.log("=============================================================");
+        httpServer.listen(appCfg.port, sessionManager);
+        util.log("=============================================================");
+        util.log(appCfg.name + " is ready!");
+        util.log("-------------------------------------------------------------");
+        util.log("- start time: " + util.now());
+        util.log("- port: " + appCfg.port);
+        util.log("- debug: " + appCfg.debug);
+        util.log("=============================================================");
     };
 };
 (new Adu()).start();

@@ -71,10 +71,6 @@ function SocketIOConnection() {
         socketIO.sockets.on("connection", function (socket) {
             // Initialize session
             var session = self.sessionManager.initSocketIOSession(socket);
-            console.log("connections----------", self.sessionManager.getSessions("socketIO").length);
-            self.sessionManager.getSessions("socketIO").forEach(function (session) {
-                console.log("session.id", session.id);
-            });
             // Fire connection event
             self.onConnectionEvent("connection", session);
             // Receive a message from the client
