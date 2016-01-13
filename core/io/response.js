@@ -6,14 +6,26 @@
 module.exports = Response;
 /** Modules **/
 var ResponseBuilder = require('../io/response-builder');
-function Response(routeName, ioConnection) {
+function Response(routeName, sessionManager) {
     this.routeName = routeName;
-    this.ioConnection = ioConnection;
+    this.sessionManager = sessionManager;
+    this.p = {
+        type: "http",
+        status: 200,
+        headers: {},
+        isToAll: false,
+        toEvent: null,
+        tos: [],
+        toExpections: [],
+        toCriterias: [],
+        toExpectionCriterias: []
+    };
     this.bindHttp = function (req, res) {
         this.type = "http";
         this.request = req;
         this.response = res;
         this.inputs = req.inputs;
+        this.session = req.session;
     };
     this.bindSocketIO = function (data, session) {
         this.type = "socketIO";
@@ -30,6 +42,8 @@ function Response(routeName, ioConnection) {
         var self = this;
         this.header("Content-Type", "application/json");
         this.build();
+        this.p.a++;
+        console.log("a", this.p.a);
         this.p.tos.forEach(function (session) {
             session.socket.emit(self.p.toEvent, data);
         });

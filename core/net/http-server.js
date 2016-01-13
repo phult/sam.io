@@ -7,28 +7,30 @@
 var http = require("http");
 /** Exports **/
 module.exports = new HttpServer();
-/** Classes **/
+/** Modules **/
 function HttpServer() {
     var self = this;
     this.listeners = [];
     this.server = http.createServer(function (req, res) {
+        req.session = self.sessionManager.initHTTPSession(req, res);
         for (var i = 0; i < self.listeners.length; i++) {
             self.listeners[i].onConnection(req, res);
         }
     });
     /**
-     * 
-     * @param {int} port Action listening port
+     * Start listening connections
+     * @param {int} port
      */
-    this.listen = function (port) {
+    this.listen = function (port, sessionManager) {
+        this.sessionManager = sessionManager;
         this.server.listen(port);
     };
     this.getServer = function () {
         return this.server;
     };
     /**
-     * 
-     * @param {Object} listener Object contain onConnection(req, res);
+     * Add a connection listener
+     * @param {Object} listener
      * @returns {Boolean}
      */
     this.addConnectionListener = function (listener) {
@@ -47,7 +49,7 @@ function HttpServer() {
         return retval;
     };
     /**
-     * 
+     * Remove a connection listener 
      * @param {Object} listener Object contain onConnection(req, res);
      * @returns {Boolean}
      */
@@ -66,19 +68,4 @@ function HttpServer() {
         }
         return retval;
     };
-    this.get = function (host, path, callbackFunc) {
-        http.get({
-            host: host,
-            path: path
-        }, function (response) {
-            var body = '';
-            response.on('data', function (trunk) {
-                body += trunk;
-            });
-            response.on('end', function () {
-                callbackFunc(JSON.parse(body));
-            });
-        });
-    };
 }
-;

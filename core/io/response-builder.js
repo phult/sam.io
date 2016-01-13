@@ -5,19 +5,10 @@
 
 /** Exports **/
 module.exports = ResponseBuilder;
+/** Imports **/
+var util = require("../util");
 /** Modules **/
-function ResponseBuilder() {
-    this.p = {
-        type: "http",
-        status: 200,
-        headers: {},
-        isToAll: false,
-        toEvent: null,
-        tos: [],
-        toExpections: [],
-        toCriterias: [],
-        toExpectionCriterias: []
-    };
+function ResponseBuilder() {    
     this.type = function (type) {
         this.p.type = type;
         return this;
@@ -37,7 +28,7 @@ function ResponseBuilder() {
     this.to = function (session) {
         if (session != null) {
             this.p.tos.push(session);
-            this.p.tos = this.p.tos.unique();
+            this.p.tos = util.arrayUnique(this.p.tos);
         }
         return this;
     };
@@ -69,16 +60,21 @@ function ResponseBuilder() {
         }
     };
     this.buildReceiver = function () {
+        var self = this;
         // build emit event
         this.p.toEvent = (this.p.toEvent === null ? this.routeName : this.p.toEvent);
         // build received io sessions
+        var socketIOSessions = this.sessionManager.getSessions("socketIO");
         if (this.p.isToAll) {
-            this.p.tos = this.ioConnection.sessions;
+            this.p.tos = socketIOSessions;
         } else {
+            if (this.session != null && this.session.type === "socketIO") {
+                this.p.tos.push(this.session);
+            }
             for (var property in this.p.toCriterias) {
-                this.ioConnection.sessions.forEach(function (session) {
-                    if (session[property] == this.p.toCriterias[property]) {
-                        this.p.tos.push(session);
+                socketIOSessions.forEach(function (session) {
+                    if (session[property] == self.p.toCriterias[property]) {
+                        self.p.tos.push(session);
                     }
                 });
             }
@@ -90,6 +86,10 @@ function ResponseBuilder() {
                 }
             }
         }
-        this.p.tos.remove(this.p.toExpections);
-    }
+        this.p.tos = util.arrayRemoveItems(this.p.tos, this.p.toExpections);
+        console.log("p.tos", this.p.tos);
+        this.p.tos.forEach(function (session) {
+
+        });
+    };
 }

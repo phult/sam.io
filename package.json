@@ -1,5 +1,5 @@
 {
-    "name": "adu",
+    "name": "adu framework",
     "description": "A lightweight node.js framework for http and socket.io server application.",
     "homepage": "http://documentcloud.github.com/underscore/",
     "keywords": ["framework", "http", "socket.io", "mvc", "lightweight", "server"],

@@ -9,7 +9,8 @@ module.exports = new RouteLoader();
 var Response = require("../io/response");
 /** Modules **/
 function RouteLoader() {
-    this.load = function (controllerLoader, httpConnection, socketIOConnection) {
+    this.load = function (controllerLoader, httpConnection, socketIOConnection, sessionManager) {
+        this.sessionManager = sessionManager;
         this.socketIOConnection = socketIOConnection;
         this.httpConnection = httpConnection;
         this.controllerLoader = controllerLoader;
@@ -22,15 +23,15 @@ function RouteLoader() {
     this.io = function (routeName, controllerMethod) {
         var self = this;
         this.socketIOConnection.addMessageListener(routeName, function (data, session) {
-            var response = new Response(routeName, self.socketIOConnection);
+            var response = new Response(routeName, self.sessionManager);
             response.bindSocketIO(data, session);
-            controllerLoader.getControllerMethod(controllerMethod)(response);
+            self.controllerLoader.getControllerMethod(controllerMethod)(response);
         });
     };
     this.get = function (routeName, controllerMethod) {
         var self = this;
         this.httpConnection.get(routeName, function (req, res) {
-            var response = new Response(routeName, self.socketIOConnection);
+            var response = new Response(routeName, self.sessionManager);
             response.bindHttp(req, res);
             self.controllerLoader.getControllerMethod(controllerMethod)(response);
         });
@@ -38,7 +39,7 @@ function RouteLoader() {
     this.post = function (routeName, controllerMethod) {
         var self = this;
         this.httpConnection.post(routeName, function (req, res) {
-            var response = new Response(routeName, self.socketIOConnection);
+            var response = new Response(routeName, self.sessionManager);
             response.bindHttp(req, res);
             self.controllerLoader.getControllerMethod(controllerMethod)(response);
         });

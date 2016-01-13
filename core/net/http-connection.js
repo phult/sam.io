@@ -23,6 +23,7 @@ function HttpConnection() {
                 req.inputs = self.getInputs(url);
                 callback(req, res, url);
             } else {
+                res.writeHead("Content-Type", "application/json");
                 res.end(JSON.stringify({
                     status: "fail",
                     errorCode: "404"
@@ -30,7 +31,7 @@ function HttpConnection() {
             }
         } else if (req.method == "POST") {
             //console.log("Post:" + url);
-            var body = "";
+            var body = "?";
             req.on("data", function (data) {
                 body += data;
                 // Too much POST data, kill the connection!
@@ -41,9 +42,9 @@ function HttpConnection() {
                 req.inputs = self.getInputs(body);
                 var callback = self.getCallback("POST", url);
                 if (callback != null) {
-                    console.log(req.inputs);
                     callback(req, res);
                 } else {
+                    res.writeHead("Content-Type", "application/json");
                     res.end(JSON.stringify({
                         status: "fail",
                         errorCode: "404"
