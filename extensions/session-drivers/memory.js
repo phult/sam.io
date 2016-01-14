@@ -3,7 +3,7 @@
  * Jan 11, 2016
  */
 module.exports = Memory;
-var Driver = require("../../core/session/driver");
+var Driver = require(__base + "/core/session/driver");
 function Memory(config) {
     this.config = config;
     var sessionData = [];
@@ -22,6 +22,9 @@ function Memory(config) {
         }
         sessionData[sessionId][key] = value;
         return true;
+    };
+    this.getSessions = function () {
+        return {};
     };
     this.destroy = function (sessionId) {
         delete sessionData[sessionId];

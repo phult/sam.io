@@ -8,5 +8,7 @@ module.exports = Driver;
 function Driver(config) {
     this.get = function (sessionId, key, defaultValue) {};
     this.set = function (sessionId, key, value) {};
+    this.getSessions = function () {};
+    this.destroy = function (sessionId) {};
 }
 

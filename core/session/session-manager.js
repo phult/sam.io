@@ -11,6 +11,7 @@ function SessionManager() {
     var driver = null;
     this.start = function (config) {
         driver = new (require("../.." + path["session-drivers"] + "/" + config.driver))(config);
+        this.sessions = driver.getSessions();
     };
     this.initHTTPSession = function (request, response) {
         var retval = {
@@ -37,12 +38,6 @@ function SessionManager() {
             retval.id = sessionId;
             retval.cookies = cookies;
             var self = this;
-            retval.get = function (key, value, defaultValue) {
-                return driver.get(retval.id, key, value, defaultValue);
-            };
-            retval.set = function (key, value) {
-                return driver.set(retval.id, key, value);
-            };
             // add to sessions
             this.sessions[sessionId] = retval;
             // set cookie value
@@ -63,6 +58,12 @@ function SessionManager() {
                 writeHead.apply(response, [statusCode, reasonPhrase, headers]);
             };
         }
+        retval.get = function (key, value, defaultValue) {
+            return driver.get(retval.id, key, value, defaultValue);
+        };
+        retval.set = function (key, value) {
+            return driver.set(retval.id, key, value);
+        };
         return retval;
     };
     this.initSocketIOSession = function (socket) {
