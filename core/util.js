@@ -36,13 +36,27 @@ function Util() {
         var second = date.getSeconds();
         return day + "/" + month + "/" + year + " " + hour + ":" + minute + ":" + second;
     };
-    this.log = function (message, option) {
+    this.log = function (message, type, option) {
         if (option != null) {
             if (option.timeDisp) {
-                console.log(this.now() + ": " + message);
+                message = this.now() + ": " + message;
             }
-        } else {
-            console.log(message);
+        }
+        switch (type) {
+            case "error":
+            {
+                console.error(message);
+                break;
+            }
+            case "warn":
+            {
+                console.warn(message);
+                break;
+            }
+            default:
+            {
+                console.log(message);
+            }
         }
     };
     this.parseObjectToRequestURL = function (obj) {

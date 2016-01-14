@@ -5,7 +5,7 @@
 /** Exports **/
 module.exports = Response;
 /** Modules **/
-var ResponseBuilder = require('../io/response-builder');
+var ResponseBuilder = require('./response-builder');
 function Response(routeName, sessionManager) {
     this.routeName = routeName;
     this.sessionManager = sessionManager;

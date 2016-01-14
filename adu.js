@@ -1,4 +1,5 @@
 // core modules
+global.__base = __dirname;
 var util = require('./core/util');
 var sessionManager = require('./core/session/session-manager');
 var httpServer = require('./core/net/http-server');
@@ -25,16 +26,14 @@ var Adu = function () {
         util.log("=============================================================");
         util.log(appCfg.name + " is ready!");
         util.log("-------------------------------------------------------------");
-        util.log("- start time: " + util.now());
-        util.log("- port: " + appCfg.port);
-        util.log("- debug: " + appCfg.debug);
+        util.log("start time: " + util.now());
+        util.log("port: " + appCfg.port);
+        util.log("debug: " + appCfg.debug);
         util.log("=============================================================");
+        process.on('uncaughtException', function (err) {
+            console.error('uncaughtException: ' + err.message);
+            console.error(err.stack);
+        });
     };
 };
 (new Adu()).start();
-
-
-process.on('uncaughtException', function (err) {
-    console.error('uncaughtException: ' + err.message);
-    console.error(err.stack);
-});

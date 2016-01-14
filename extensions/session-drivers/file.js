@@ -3,9 +3,9 @@
  * Jan 11, 2016
  */
 module.exports = File;
-var Driver = require("../../core/session/driver");
+var Driver = require(__base + "/core/session/driver");
 var fs = require("fs");
-var util = require('../../core/util');
+var util = require(__base + '/core/util');
 function File(config) {
     var sessionStorage = config.storage;
     this.get = function (sessionId, key, defaultValue) {
