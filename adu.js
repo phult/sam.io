@@ -1,18 +1,18 @@
-// core modules
 global.__base = __dirname;
-var util = require('./core/util');
-var sessionManager = require('./core/session/session-manager');
-var httpServer = require('./core/net/http-server');
-var controllerLoader = require('./core/loader/controller-loader');
-var routerLoader = require('./core/loader/route-loader');
-var httpConnection = require('./core/net/http-connection');
-var socketIOConnection = require('./core/net/socket-io-connection');
+// core modules
+var util = require(__base + "/core/util");
+var sessionManager = require(__base + "/core/session/session-manager");
+var httpServer = require(__base + "/core/net/http-server");
+var controllerLoader = require(__base + "/core/loader/controller-loader");
+var routerLoader = require(__base + "/core/loader/route-loader");
+var httpConnection = require(__base + "/core/net/http-connection");
+var socketIOConnection = require(__base + "/core/net/socket-io-connection");
 // config for start
-var controllers = require('./start/controllers');
-var routes = require('./start/routes');
+var controllers = require(__base + "/start/controllers");
+var routes = require(__base + "/routes");
 // config files
-var appCfg = require('./config/app');
-var sessionCfg = require('./config/session');
+var appCfg = require(__base + "/config/app");
+var sessionCfg = require(__base + "/config/session");
 
 var Adu = function () {
     this.start = function () {
@@ -30,8 +30,8 @@ var Adu = function () {
         util.log("port: " + appCfg.port);
         util.log("debug: " + appCfg.debug);
         util.log("=============================================================");
-        process.on('uncaughtException', function (err) {
-            console.error('uncaughtException: ' + err.message);
+        process.on("uncaughtException", function (err) {
+            console.error("uncaughtException: " + err.message);
             console.error(err.stack);
         });
     };
