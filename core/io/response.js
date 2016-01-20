@@ -4,6 +4,8 @@
  */
 /** Exports **/
 module.exports = Response;
+/** Imports **/
+var fs = require("fs");
 /** Modules **/
 var ResponseBuilder = require('./response-builder');
 function Response(routeName, sessionManager) {
@@ -35,12 +37,11 @@ function Response(routeName, sessionManager) {
     /**
      * Return a JSON response
      * @param {jsonString | object} data
-     * @param {int} status
-     * @param {array} headers
      */
     this.json = function (data) {
         var self = this;
         this.header("Content-Type", "application/json");
+        this.header("Connection", "close");
         this.build();
         this.p.tos.forEach(function (session) {
             session.socket.emit(self.p.toEvent, data);
@@ -52,12 +53,11 @@ function Response(routeName, sessionManager) {
     /**
      * Return a custom response
      * @param {string} content
-     * @param {int} status
-     * @param {array} headers
      */
     this.make = function (content) {
         var self = this;
         this.header("Content-Type", "text/html; charset=UTF-8");
+        this.header("Connection", "close");
         this.build();
         this.p.tos.forEach(function (session) {
             session.socket.emit(self.p.toEvent, content);
@@ -70,21 +70,22 @@ function Response(routeName, sessionManager) {
      * Return a view response
      * @param {View} view
      * @param {object} data
-     * @param {int} status
-     * @param {array} headers
      */
     this.view = function (view, data) {
+        this.header("Connection", "close");
         this.build();
+//        TODO
     };
     /**
      * Return a file response
-     * @param {View} view
-     * @param {string} file
-     * @param {string} name
+     * @param {string} filePath
      * @param {array} headers
      */
-    this.download = function (file, name) {
+    this.download = function (filePath) {
+        this.header("Connection", "close");
         this.build();
+        var file = fs.readFileSync(filePath);
+        this.response.end(file, 'binary');
     };
 }
 Response.prototype = new ResponseBuilder();
