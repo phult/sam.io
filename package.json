@@ -1,5 +1,5 @@
 {
-    "name": "adu framework",
+    "name": "adu",
     "description": "A lightweight node.js framework for http and socket.io server application.",
     "homepage": "https://github.com/phult",
     "keywords": ["framework", "http", "socket.io", "mvc", "lightweight", "server"],
