@@ -3,14 +3,14 @@
  * Jan 11, 2016
  */
 module.exports = new SessionManager();
-var path = require('../../bootstrap/paths');
+var pathConfig = require(__dir + '/config/paths');
 var util = require('../../core/util');
 function SessionManager() {
     this.SESSION_ID_KEY = "adu_session_id";
     this.sessions = {};
     var driver = null;
     this.start = function (config) {
-        driver = new (require("../.." + path["session-drivers"] + "/" + config.driver))(config);
+        driver = new (require("../.." + pathConfig["sessionDrivers"] + "/" + config.driver))(config);
         this.sessions = driver.getSessions();
     };
     this.initHTTPSession = function (request, response) {

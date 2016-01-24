@@ -3,7 +3,7 @@
  * Jan 11, 2016
  */
 module.exports = Memory;
-var Driver = require(__base + "/core/session/driver");
+var Driver = require(__dir + "/core/session/driver");
 function Memory(config) {
     this.config = config;
     var sessionData = [];

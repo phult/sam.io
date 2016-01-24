@@ -3,9 +3,9 @@
  * Jan 11, 2016
  */
 module.exports = File;
-var Driver = require(__base + "/core/session/driver");
+var Driver = require(__dir + "/core/session/driver");
 var fs = require("fs");
-var util = require(__base + '/core/util');
+var util = require(__dir + '/core/util');
 function File(config) {
     var sessionStorage = config.storage;
     if (!fs.existsSync(sessionStorage)) {
