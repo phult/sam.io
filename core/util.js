@@ -68,6 +68,11 @@ function Util() {
         }
         return retval;
     };
+    /**
+     * Return a random string with length
+     * @param {Int} length
+     * @returns {String}
+     */
     this.randomString = function (length) {
         var retval = "";
         if (length == null) {
@@ -79,6 +84,10 @@ function Util() {
         }
         return retval;
     };
+    /**
+     * Delete directory and files
+     * @param {String} path     
+     */
     this.deleteDirectory = function (path) {
         var self = this;
         if (fs.existsSync(path)) {
@@ -109,8 +118,8 @@ function Util() {
     };
     /**
      * Remove item array from source array
-     * @param {type} removedItems
-     * @returns {Array.prototype.remove.retval|Array@call;concat}
+     * @param {Array} removedItems
+     * @returns {Array}
      */
     this.arrayRemoveItems = function (arr, removedItems) {
         var retval = arr;
@@ -121,6 +130,27 @@ function Util() {
                 }
             }
         }
+        return retval;
+    };
+    /**
+     * Get file list with full-path in a directory
+     * @param {String} directory
+     * @returns {Array}
+     */
+    this.browseFiles = function (directory) {
+        var retval = [];
+        var self = this;
+        fs.readdirSync(directory).forEach(function (item) {
+            var subPath = directory + "/" + item;
+            if (fs.lstatSync(subPath).isDirectory()) {
+                var files = self.browseFiles(subPath);
+                if (files.length > 0) {
+                    retval = retval.concat(files);
+                }
+            } else {
+                retval.push(subPath);
+            }
+        });
         return retval;
     };
 }

@@ -67,16 +67,6 @@ function Response(routeName, sessionManager) {
         }
     };
     /**
-     * Return a view response
-     * @param {View} view
-     * @param {object} data
-     */
-    this.view = function (view, data) {
-        this.header("Connection", "close");
-        this.build();
-//        TODO
-    };
-    /**
      * Return a file response
      * @param {string} filePath
      * @param {array} headers
@@ -86,6 +76,16 @@ function Response(routeName, sessionManager) {
         this.build();
         var file = fs.readFileSync(filePath);
         this.response.end(file, 'binary');
+    };
+    /**
+     * Render a view response
+     * @param {View} view
+     * @param {object} data
+     */
+    this.render = function (view, data) {
+        this.header("Connection", "close");
+        this.build();
+//        TODO
     };
 }
 Response.prototype = new ResponseBuilder();
