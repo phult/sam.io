@@ -75,6 +75,7 @@ function SocketIOConnection() {
             self.onConnectionEvent("connection", session);
             // Receive a message from the client
             self.bindSocketMessageToListeners(socket, session);
+            // Client disconnect
             socket.on("disconnect", function () {
                 // Remove from sessions
                 var session = self.sessionManager.getSessionBySocket(socket);

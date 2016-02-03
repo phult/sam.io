@@ -1,6 +1,8 @@
 module.exports = {
-    // session driver: file, memory
+    /** Session timeout: minutes **/
+    timeout: 30,
+    /** Session driver: file, memory **/
     driver: "file",
-    // session file path
+    /** Session file path **/
     storage: __dir + "/storage/sessions"
 };

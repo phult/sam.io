@@ -1,15 +1,18 @@
 module.exports = HomeController;
 function HomeController() {
     this.index = function (response) {
-        // set session data
-        response.session.set("message", "hello world");
+        var defaultValue = "defaultValue";
         // get session data
-        var responseData = response.session.get("message", "defaultValue");
+        var responseData = response.session.get("message", defaultValue);
+        // set session data
+        if (responseData === defaultValue) {
+            response.session.set("message", "hello world");
+        }
         // respond
         response.status(200)
                 .header("Content-Length", responseData.length)
                 .make(responseData);
-    };    
+    };
     this.broadcast = function (response) {
         var responseData = {
             status: "successful",

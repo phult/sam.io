@@ -3,15 +3,22 @@
  * Jan 11, 2016
  */
 module.exports = new SessionManager();
-var pathConfig = require(__dir + '/config/paths');
-var util = require('../../core/util');
+var pathConfig = require(__dir + "/config/paths");
+var util = require("../../core/util");
+var sessions = {};
+var driver = null;
 function SessionManager() {
     this.SESSION_ID_KEY = "adu_session_id";
-    this.sessions = {};
-    var driver = null;
+    this.timeout = -1;
+    this.interval = 60000;
     this.start = function (config) {
-        driver = new (require("../.." + pathConfig["sessionDrivers"] + "/" + config.driver))(config);
-        this.sessions = driver.getSessions();
+        var self = this;
+        this.timeout = config.timeout * 60 * 1000;
+        driver = new (require(__dir + pathConfig["sessionDrivers"] + "/" + config.driver))(config);
+        sessions = driver.getSessions();
+        setInterval(function () {
+            self.killExpiredSessions();
+        }, this.interval);
     };
     this.initHTTPSession = function (request, response) {
         var retval = {
@@ -26,8 +33,8 @@ function SessionManager() {
             });
         }
         // existed session
-        if (cookies[this.SESSION_ID_KEY] != null && this.sessions[cookies[this.SESSION_ID_KEY]] != null) {
-            retval = this.sessions[cookies[this.SESSION_ID_KEY]];
+        if (cookies[this.SESSION_ID_KEY] != null && sessions[cookies[this.SESSION_ID_KEY]] != null) {
+            retval = sessions[cookies[this.SESSION_ID_KEY]];
             if (retval != null) {
                 retval.cookies = cookies;
             }
@@ -39,13 +46,13 @@ function SessionManager() {
             retval.cookies = cookies;
             var self = this;
             // add to sessions
-            this.sessions[sessionId] = retval;
+            sessions[sessionId] = retval;
             // set cookie value
             var writeHead = response.writeHead;
             response.writeHead = function (statusCode) {
-                var reasonPhrase = '', headers = {};
+                var reasonPhrase = "", headers = {};
                 if (2 == arguments.length) {
-                    if ('string' == typeof arguments[1]) {
+                    if ("string" == typeof arguments[1]) {
                         reasonPhrase = arguments[1];
                     } else {
                         headers = arguments[1];
@@ -54,10 +61,11 @@ function SessionManager() {
                     reasonPhrase = arguments[1];
                     headers = arguments[2];
                 }
-                headers['Set-Cookie'] = self.SESSION_ID_KEY + '=' + sessionId;
+                headers["Set-Cookie"] = self.SESSION_ID_KEY + "=" + sessionId;
                 writeHead.apply(response, [statusCode, reasonPhrase, headers]);
             };
         }
+        retval.lastActive = Date.now();
         retval.get = function (key, value, defaultValue) {
             return driver.get(retval.id, key, value, defaultValue);
         };
@@ -74,6 +82,7 @@ function SessionManager() {
         retval.id = socket.id;
         retval.userId = userId;
         retval.socket = socket;
+        retval.lastActive = Date.now();
         if (socket.handshake.query.extra != null) {
             var params = socket.handshake.query.extra.split(",");
             params.forEach(function (param) {
@@ -81,13 +90,14 @@ function SessionManager() {
             });
         }
         // add to sessions
-        this.sessions[socket.id] = retval;
+        sessions[socket.id] = retval;
         return retval;
     };
     this.destroy = function (session) {
         var retval = false;
         if (session != null && session.id != null) {
-            delete this.sessions[session.id];
+            delete sessions[session.id];
+            driver.destroy(session.id);
             retval = true;
         }
         return retval;
@@ -98,7 +108,7 @@ function SessionManager() {
      */
     this.getUsers = function () {
         var retval = [];
-        for (var i = 0; i < this.sessions.length; i++) {
+        for (var i = 0; i < sessions.length; i++) {
             if (sessions[i].userId == null) {
                 continue;
             }
@@ -107,13 +117,13 @@ function SessionManager() {
                 if (retval[j].userId == null) {
                     continue;
                 }
-                if (retval[j].userId == this.sessions[i].userId) {
+                if (retval[j].userId == sessions[i].userId) {
                     existedUser = true;
                     break;
                 }
             }
             if (!existedUser) {
-                retval.push(this.sessions[i]);
+                retval.push(sessions[i]);
             }
         }
         return retval;
@@ -125,9 +135,9 @@ function SessionManager() {
      */
     this.getUserSessions = function (userId) {
         var reval = [];
-        for (var i = 0; i < this.sessions.length; i++) {
-            if (this.sessions[i].userId == userId) {
-                reval.push(this.sessions[i]);
+        for (var i = 0; i < sessions.length; i++) {
+            if (sessions[i].userId == userId) {
+                reval.push(sessions[i]);
             }
         }
         return reval;
@@ -141,28 +151,28 @@ function SessionManager() {
         switch (type) {
             case "http":
             {
-                for (var sessionId in this.sessions) {
-                    if (this.sessions[sessionId].type == "http") {
-                        retval.push(this.sessions[sessionId]);
+                for (var sessionId in sessions) {
+                    if (sessions[sessionId].type == "http") {
+                        retval.push(sessions[sessionId]);
                     }
                 }
                 break;
             }
             case "socketIO":
             {
-                for (var sessionId in this.sessions) {
-                    if (this.sessions[sessionId].type == "socketIO") {
-                        retval.push(this.sessions[sessionId]);
+                for (var sessionId in sessions) {
+                    if (sessions[sessionId].type == "socketIO") {
+                        retval.push(sessions[sessionId]);
                     }
                 }
                 break;
             }
             default :
             {
-                for (var sessionId in this.sessions) {
-                    retval.push(this.sessions[sessionId]);
+                for (var sessionId in sessions) {
+                    retval.push(sessions[sessionId]);
                 }
-                retval = this.sessions;
+                retval = sessions;
             }
         }
         return retval;
@@ -173,12 +183,24 @@ function SessionManager() {
      */
     this.getSessionBySocket = function (socket) {
         var retval = null;
-        for (var sessionId in this.sessions) {
-            if (this.sessions[sessionId].socket == socket) {
-                retval = this.sessions[sessionId];
+        for (var sessionId in sessions) {
+            if (sessions[sessionId].socket == socket) {
+                retval = sessions[sessionId];
                 break;
             }
         }
         return retval;
+    };
+    /**
+     * Find expired sessions and kill them
+     */
+    this.killExpiredSessions = function () {
+        var httpSessions = this.getSessions("http");
+        for (var i = 0; i < httpSessions.length; i++) {
+            var session = httpSessions[i];
+            if ((Date.now() - session.lastActive) > this.timeout) {
+                this.destroy(session);
+            }
+        }
     };
 }
