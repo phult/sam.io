@@ -1,17 +1,18 @@
 {
-    "name": "adu",
+    "name": "AduFramework",
     "description": "A lightweight node.js framework for http and socket.io server application.",
     "homepage": "https://github.com/phult",
+    "author": "PhuLuong <phult.contact@gmail.com>",
     "keywords": ["framework", "http", "socket.io", "mvc", "lightweight", "server"],
-    "author": "Phu Luong <phult.contact@gmail.com>",
+    "license": "MIT",
+    "version": "0.5.1",
+    "main": "adu.js",
     "contributors": [],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/phult/adu.git"
     },
-    "main": "adu.js",
-    "version": "0.5.1",
-    "dependencies": {        
+    "dependencies": {
         "socket.io": "^1.3.7"
     }
 }
