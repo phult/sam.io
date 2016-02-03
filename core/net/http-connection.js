@@ -55,6 +55,7 @@ function HttpConnection() {
     };
     this.getInputs = function (url) {
         var retval = {};
+        url = decodeURIComponent(url);
         url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
                 function (m, key, value) {
                     retval[key] = value;
