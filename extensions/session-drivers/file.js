@@ -38,11 +38,16 @@ function File(config) {
         return retval;
     };
     this.getSessions = function () {
+        var self = this;
         var sessions = {};
         fs.readdirSync(sessionStorage).forEach(function (sessionDir) {
             var sessionPath = sessionStorage + "/" + sessionDir;
             if (fs.lstatSync(sessionPath).isDirectory()) {
-                sessions[sessionDir] = {id: sessionDir};
+                sessions[sessionDir] = {
+                    id: sessionDir,
+                    type: self.get(sessionDir, "_type_"),
+                    lastActive: self.get(sessionDir, "_lastActive_")
+                };
                 // Get value of session key
                 /*fs.readdirSync(sessionPath).forEach(function (sessionDataFile) {
                  var sessionDataPath = sessionStorage + "/" + sessionDir + "/" + sessionDataFile;

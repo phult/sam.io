@@ -72,6 +72,8 @@ function SessionManager() {
         retval.set = function (key, value) {
             return driver.set(retval.id, key, value);
         };
+        retval.set("_type_", retval.type);
+        retval.set("_lastActive_", retval.lastActive);
         return retval;
     };
     this.initSocketIOSession = function (socket) {
@@ -89,6 +91,14 @@ function SessionManager() {
                 retval[param] = socket.handshake.query[param];
             });
         }
+        retval.get = function (key, value, defaultValue) {
+            return driver.get(retval.id, key, value, defaultValue);
+        };
+        retval.set = function (key, value) {
+            return driver.set(retval.id, key, value);
+        };
+        retval.set("_type_", retval.type);
+        retval.set("_lastActive_", retval.lastActive);
         // add to sessions
         sessions[socket.id] = retval;
         return retval;
