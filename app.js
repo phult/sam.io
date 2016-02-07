@@ -15,7 +15,7 @@ var routes = require(__dir + "/start/routes");
 var appCfg = require(__dir + "/config/app");
 var sessionCfg = require(__dir + "/config/session");
 
-var Adu = function () {
+var app = function () {
     this.start = function () {
         sessionManager.start(sessionCfg);
         controllerLoader.loadDirectory(__dir + bootstrapPaths.controllers);
@@ -26,18 +26,16 @@ var Adu = function () {
         routes(routerLoader);
         httpServer.listen(appCfg.port, sessionManager);
         util.log("");
-        util.log("   /|| ||\\  | ||  " + packageCfg.name + " - version " + packageCfg.version);
-        util.log("  /_|| ||_|  \\||  " + packageCfg.homepage);
+        util.log("   /|| ||\\ | ||  " + packageCfg.name + " - version " + packageCfg.version);
+        util.log("  /_|| ||_| \\||  " + packageCfg.homepage);
         util.log("");
-        util.log("-------------------------------------------------------------");
         util.log(" Start time:  " + util.now());
         util.log(" Port:        " + appCfg.port);
         util.log(" Debug mode:  " + appCfg.debug);
-        util.log("=============================================================");
         process.on("uncaughtException", function (err) {
             console.error("uncaughtException: " + err.message);
             console.error(err.stack);
         });
     };
 };
-(new Adu()).start();
+(new app()).start();

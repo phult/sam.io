@@ -6,7 +6,7 @@
     "keywords": ["framework", "http", "socket.io", "mvc", "lightweight", "server"],
     "license": "MIT",
     "version": "0.5.1",
-    "main": "adu.js",
+    "main": "app.js",
     "contributors": [],
     "repository": {
         "type": "git",
