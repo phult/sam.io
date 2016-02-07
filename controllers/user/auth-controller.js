@@ -9,15 +9,15 @@ function AuthController() {
         // check if user logged in
         if (user != null) {
             // build response data
-            respondData.status = "logged-in";
+            respondData.status = "logged_in";
             respondData.result = user;
         } else {
-            // process logging in bussiness
+            // process login
             // ...
             // set session data
             response.session.set("user", response.inputs);
             // build response data
-            respondData.status = "login-successfully";
+            respondData.status = "login_successfully";
             respondData.result = response.inputs;
         }
         // respond
