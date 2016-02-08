@@ -25,7 +25,7 @@ function RouteLoader() {
     this.io = function (routeName, controllerMethod, filters) {
         var self = this;
         this.socketIOConnection.addMessageListener(routeName, function (data, session) {
-            var io = new IO(routeName, self.sessionManager);
+            var io = new IO(self.controllerLoader, routeName, self.sessionManager);
             io.bindSocketIO(data, session);
             callControllerMethod(self, controllerMethod, io, filters);
         });
@@ -34,7 +34,7 @@ function RouteLoader() {
     this.get = function (routeName, controllerMethod, filters) {
         var self = this;
         this.httpConnection.get(routeName, function (req, res) {
-            var io = new IO(routeName, self.sessionManager);
+            var io = new IO(self.controllerLoader, routeName, self.sessionManager);
             io.bindHttp(req, res);
             callControllerMethod(self, controllerMethod, io, filters);
         });
@@ -43,7 +43,7 @@ function RouteLoader() {
     this.post = function (routeName, controllerMethod, filters) {
         var self = this;
         this.httpConnection.post(routeName, function (req, res) {
-            var io = new IO(routeName, self.sessionManager);
+            var io = new IO(self.controllerLoader, routeName, self.sessionManager);
             io.bindHttp(req, res);
             callControllerMethod(self, controllerMethod, io, filters);
         });

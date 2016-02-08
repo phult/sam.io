@@ -8,7 +8,8 @@ module.exports = IO;
 var fs = require("fs");
 /** Modules **/
 var IOBuilder = require('./io-builder');
-function IO(routeName, sessionManager) {
+function IO(controllerLoader, routeName, sessionManager) {
+    this.controllerLoader = controllerLoader;
     this.routeName = routeName;
     this.sessionManager = sessionManager;
     this.p = {
@@ -85,7 +86,26 @@ function IO(routeName, sessionManager) {
     this.render = function (view, data) {
         this.header("Connection", "close");
         this.build();
-//        TODO
+        // TODO
+    };
+    /**
+     * Create a new redirect response to a action
+     * @param {String|Function} action
+     */
+    this.delegate = function (action) {
+        if (typeof action === "function") {
+            action(this);
+        } else if (typeof action === "string") {
+            this.controllerLoader.getControllerMethod(action)(this);
+        }
+    };
+    /**
+     * Create a new redirect response to a url
+     * @param {String|Function} url
+     */
+    this.redirect = function (url) {
+        this.status(301).header("Location", url).make("");
+
     };
 }
 IO.prototype = new IOBuilder();

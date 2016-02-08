@@ -48,6 +48,7 @@ function SessionManager() {
             // add to sessions
             sessions[sessionId] = retval;
             // set cookie value
+            var writeHead = response.writeHead;
             response.writeHead = function (statusCode) {
                 var reasonPhrase = "", headers = {};
                 if (2 == arguments.length) {

@@ -6,18 +6,17 @@ function AuthController() {
         var respondData = {};
         // get session data
         var user = io.session.get("user", null);
-        // check if user logged in
+        // user logged in
         if (user != null) {
-            // build response data
-            respondData.status = "logged_in";
-            respondData.result = user;
+            // redirect to index action
+            io.redirect("/home");
         } else {
             // process login
             // ...
             // set session data
             io.session.set("user", io.inputs);
             // build response data
-            respondData.status = "login_successfully";
+            respondData.status = "just login";
             respondData.result = io.inputs;
         }
         // respond

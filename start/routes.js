@@ -6,7 +6,7 @@ module.exports = function (route) {
         io.make("hello world");
     });
     route.get("/home", "HomeController@index");
-    route.post("/login", "User/AuthController@login");
+    route.any("/login", "User/AuthController@login");
     route.get("/download", "HomeController@download",
             {
                 before: ["auth", function (io) {

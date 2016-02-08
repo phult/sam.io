@@ -1,17 +1,26 @@
 module.exports = HomeController;
 function HomeController() {
     this.index = function (io) {
-        var defaultValue = "first visit";
         // get session data
-        var responseData = io.session.get("message", defaultValue);
-        // set session data
-        if (responseData === defaultValue) {
-            io.session.set("message", "welcome back");
+        var user = io.session.get("user", null);
+        // user logged in
+        if (user != null) {
+            var defaultValue = "first visit";
+            // get session data
+            var responseData = io.session.get("message", defaultValue);
+            // set session data
+            if (responseData === defaultValue) {
+                io.session.set("message", "welcome back");
+            }
+            // respond
+            io.status(200)
+                    .header("Content-Length", responseData.length)
+                    .make(responseData);
         }
-        // respond
-        io.status(200)
-                .header("Content-Length", responseData.length)
-                .make(responseData);
+        // redirect to login action
+        else {
+            io.delegate("User/AuthController@login");
+        }
     };
     this.broadcast = function (io) {
         var responseData = {
