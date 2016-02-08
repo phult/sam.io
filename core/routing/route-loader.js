@@ -16,36 +16,36 @@ function RouteLoader() {
         this.httpConnection = httpConnection;
         this.controllerLoader = controllerLoader;
     };
-    this.any = function (routeName, controllerMethod, filters) {
-        this.io(routeName, controllerMethod, filters);
-        this.get(routeName, controllerMethod, filters);
-        this.post(routeName, controllerMethod, filters);
+    this.any = function (routeName, route, filters) {
+        this.io(routeName, route, filters);
+        this.get(routeName, route, filters);
+        this.post(routeName, route, filters);
         return this;
     };
-    this.io = function (routeName, controllerMethod, filters) {
+    this.io = function (routeName, action, filters) {
         var self = this;
         this.socketIOConnection.addMessageListener(routeName, function (data, session) {
             var io = new IO(self.controllerLoader, routeName, self.sessionManager);
             io.bindSocketIO(data, session);
-            callControllerMethod(self, controllerMethod, io, filters);
+            executeAction(self, action, io, filters);
         });
         return this;
     };
-    this.get = function (routeName, controllerMethod, filters) {
+    this.get = function (routeName, action, filters) {
         var self = this;
         this.httpConnection.get(routeName, function (req, res) {
             var io = new IO(self.controllerLoader, routeName, self.sessionManager);
             io.bindHttp(req, res);
-            callControllerMethod(self, controllerMethod, io, filters);
+            executeAction(self, action, io, filters);
         });
         return this;
     };
-    this.post = function (routeName, controllerMethod, filters) {
+    this.post = function (routeName, action, filters) {
         var self = this;
         this.httpConnection.post(routeName, function (req, res) {
             var io = new IO(self.controllerLoader, routeName, self.sessionManager);
             io.bindHttp(req, res);
-            callControllerMethod(self, controllerMethod, io, filters);
+            executeAction(self, action, io, filters);
         });
         return this;
     };
@@ -59,7 +59,7 @@ function RouteLoader() {
         this.filterContainer[name] = callbackFn;
         return this;
     };
-    function callControllerMethod(self, controllerMethod, io, filters) {
+    function executeAction(self, action, io, filters) {
         var interrupt = false;
         // call before-filter
         if (filters != null && filters.before != null) {
@@ -91,10 +91,10 @@ function RouteLoader() {
             return;
         }
         // call controller method
-        if (typeof controllerMethod === "function") {
-            controllerMethod(io);
-        } else if (typeof controllerMethod === "string") {
-            self.controllerLoader.getControllerMethod(controllerMethod)(io);
+        if (typeof action === "function") {
+            action(io);
+        } else if (typeof action === "string") {
+            self.controllerLoader.getAction(action)(io);
         }
         // call after-filter
         if (filters != null && filters.after != null) {

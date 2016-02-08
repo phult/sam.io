@@ -96,7 +96,7 @@ function IO(controllerLoader, routeName, sessionManager) {
         if (typeof action === "function") {
             action(this);
         } else if (typeof action === "string") {
-            this.controllerLoader.getControllerMethod(action)(this);
+            this.controllerLoader.getAction(action)(this);
         }
     };
     /**

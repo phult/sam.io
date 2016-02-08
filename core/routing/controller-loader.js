@@ -43,7 +43,7 @@ function ControllerLoader() {
         });
     };
     // Get a method of registed controller with method name - format: controller@method
-    this.getControllerMethod = function (methodName) {
+    this.getAction = function (methodName) {
         var retval = null;
         var controllerNMethod = methodName.split("@");
         if (controllerNMethod.length == 2) {
