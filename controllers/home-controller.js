@@ -1,12 +1,12 @@
 module.exports = HomeController;
 function HomeController() {
     this.index = function (response) {
-        var defaultValue = "defaultValue";
+        var defaultValue = "first visit";
         // get session data
         var responseData = response.session.get("message", defaultValue);
         // set session data
         if (responseData === defaultValue) {
-            response.session.set("message", "hello world");
+            response.session.set("message", "welcome back");
         }
         // respond
         response.status(200)

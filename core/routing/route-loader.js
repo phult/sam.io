@@ -9,6 +9,7 @@ module.exports = new RouteLoader();
 var Response = require("../io/response");
 /** Modules **/
 function RouteLoader() {
+    this.filterContainer = [];
     this.load = function (controllerLoader, httpConnection, socketIOConnection, sessionManager) {
         this.sessionManager = sessionManager;
         this.socketIOConnection = socketIOConnection;
@@ -48,15 +49,72 @@ function RouteLoader() {
         });
         return this;
     };
+    /**
+     * Register a filter to the route
+     * @param {String} name
+     * @param {callable} callbackFn
+     * @returns {RouteLoader}
+     */
+    this.filter = function (name, callbackFn) {
+        this.filterContainer[name] = callbackFn;
+        return this;
+    };
     function callControllerMethod(self, controllerMethod, response, filters) {
+        var interrupt = false;
+        // call before-filter
         if (filters != null && filters.before != null) {
-            if (filters.before(response) === false) {
-                return;
+            if (typeof filters.before === "function") {
+                if (filters.before(response) === false) {
+                    interrupt = true;
+                }
+            } else if (typeof filters.before === "string") {
+                if (self.filterContainer[filters.before] != null && self.filterContainer[filters.before](response) === false) {
+                    interrupt = true;
+                }
+            } else if ((typeof filters.before === "object") && filters.before.length > 0) {
+                for (var i = 0; i < filters.before.length; i++) {
+                    if (typeof filters.before[i] === "function") {
+                        if (filters.before[i](response) === false) {
+                            interrupt = true;
+                        }
+                    } else if (typeof filters.before[i] === "string") {
+                        if (self.filterContainer[filters.before[i]] != null && self.filterContainer[filters.before[i]](response) === false) {
+                            interrupt = true;
+                        }
+                    }
+                }
             }
+
         }
-        self.controllerLoader.getControllerMethod(controllerMethod)(response);
+        // if before-filter return false, return before calling controller method
+        if (interrupt) {
+            return;
+        }
+        // call controller method
+        if (typeof controllerMethod === "function") {
+            controllerMethod(response);
+        } else if (typeof controllerMethod === "string") {
+            self.controllerLoader.getControllerMethod(controllerMethod)(response);
+        }
+        // call after-filter
         if (filters != null && filters.after != null) {
-            filters.after(response);
+            if (typeof filters.after === "function") {
+                filters.after(response);
+            } else if (typeof filters.after === "string") {
+                if (self.filterContainer[filters.after] != null) {
+                    self.filterContainer[filters.after](response);
+                }
+            } else if ((typeof filters.after === "object") && filters.after.length > 0) {
+                for (var i = 0; i < filters.after.length; i++) {
+                    if (typeof filters.after[i] === "function") {
+                        filters.after[i](response);
+                    } else if (typeof filters.after[i] === "string") {
+                        if (self.filterContainer[filters.after[i]] != null) {
+                            self.filterContainer[filters.after[i]](response);
+                        }
+                    }
+                }
+            }
         }
     }
 }

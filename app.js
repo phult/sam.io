@@ -15,7 +15,7 @@ var routes = require(__dir + "/start/routes");
 var appCfg = require(__dir + "/config/app");
 var sessionCfg = require(__dir + "/config/session");
 
-var app = function () {
+var App = function () {
     this.start = function () {
         sessionManager.start(sessionCfg);
         controllerLoader.loadDirectory(__dir + bootstrapPaths.controllers);
@@ -38,4 +38,4 @@ var app = function () {
         });
     };
 };
-(new app()).start();
+(new App()).start();
