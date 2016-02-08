@@ -4,11 +4,11 @@
  */
 
 /** Exports **/
-module.exports = ResponseBuilder;
+module.exports = IOBuilder;
 /** Imports **/
 var util = require("../util");
 /** Modules **/
-function ResponseBuilder() {    
+function IOBuilder() {    
     this.type = function (type) {
         this.p.type = type;
         return this;

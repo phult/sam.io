@@ -2,17 +2,17 @@ var util = require(__dir + "/core/util");
 module.exports = function (route) {
 
     /** Register HTTP requests **/
-    route.get("/", function (response) {
-        response.make("hello world");
+    route.get("/", function (io) {
+        io.make("hello world");
     });
     route.get("/home", "HomeController@index");
     route.post("/login", "User/AuthController@login");
     route.get("/download", "HomeController@download",
             {
-                before: ["auth", function (response) {
+                before: ["auth", function (io) {
                         util.log("processing a download request");
                     }],
-                after: function (response) {
+                after: function (io) {
                     util.log("finished a download request");
                 }
             }
@@ -22,9 +22,9 @@ module.exports = function (route) {
     route.io("broadcast", "HomeController@broadcast");
 
     /** Register filters **/
-    route.filter("auth", function (response) {
-        if (response.session.get("user") == null) {
-            response.status(401).json({
+    route.filter("auth", function (io) {
+        if (io.session.get("user") == null) {
+            io.status(401).json({
                 status: 401,
                 result: "unauthorized"
             });

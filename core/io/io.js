@@ -3,12 +3,12 @@
  * December 27, 2015
  */
 /** Exports **/
-module.exports = Response;
+module.exports = IO;
 /** Imports **/
 var fs = require("fs");
 /** Modules **/
-var ResponseBuilder = require('./response-builder');
-function Response(routeName, sessionManager) {
+var IOBuilder = require('./io-builder');
+function IO(routeName, sessionManager) {
     this.routeName = routeName;
     this.sessionManager = sessionManager;
     this.p = {
@@ -88,5 +88,5 @@ function Response(routeName, sessionManager) {
 //        TODO
     };
 }
-Response.prototype = new ResponseBuilder();
+IO.prototype = new IOBuilder();
 

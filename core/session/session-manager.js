@@ -17,7 +17,7 @@ function SessionManager() {
         driver = new (require(__dir + pathConfig["sessionDrivers"] + "/" + config.driver))(config);
         sessions = driver.getSessions();
         setInterval(function () {
-            self.killExpiredSessions();
+            self.destroyExpiredSessions();
         }, this.interval);
     };
     this.initHTTPSession = function (request, response) {
@@ -48,7 +48,6 @@ function SessionManager() {
             // add to sessions
             sessions[sessionId] = retval;
             // set cookie value
-            var writeHead = response.writeHead;
             response.writeHead = function (statusCode) {
                 var reasonPhrase = "", headers = {};
                 if (2 == arguments.length) {
@@ -202,9 +201,9 @@ function SessionManager() {
         return retval;
     };
     /**
-     * Find expired sessions and kill them
+     * Find expired sessions and destroy them
      */
-    this.killExpiredSessions = function () {
+    this.destroyExpiredSessions = function () {
         var httpSessions = this.getSessions("http");
         for (var i = 0; i < httpSessions.length; i++) {
             var session = httpSessions[i];
