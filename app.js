@@ -29,9 +29,10 @@ var App = function () {
         util.log("   /|| ||\\ | ||  " + packageCfg.name + " - version " + packageCfg.version);
         util.log("  /_|| ||_| \\||  " + packageCfg.homepage);
         util.log("");
-        util.log(" Start time:  " + util.now());
-        util.log(" Port:        " + appCfg.port);
-        util.log(" Debug mode:  " + appCfg.debug);
+        util.log("Start time:  " + util.now());
+        util.log("Port:        " + appCfg.port);
+        util.log("Debug mode:  " + appCfg.debug);
+        util.log("===========================================================");
         process.on("uncaughtException", function (err) {
             console.error("uncaughtException: " + err.message);
             console.error(err.stack);

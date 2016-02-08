@@ -86,11 +86,11 @@ function RouteLoader() {
             }
 
         }
-        // if before-filter return false, return before calling controller method
+        // if before-filter return false, return before executing action
         if (interrupt) {
             return;
         }
-        // call controller method
+        // call action
         if (typeof action === "function") {
             action(io);
         } else if (typeof action === "string") {

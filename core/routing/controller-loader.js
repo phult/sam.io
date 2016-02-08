@@ -42,10 +42,10 @@ function ControllerLoader() {
             self.load(controllerName, controller);
         });
     };
-    // Get a method of registed controller with method name - format: controller@method
-    this.getAction = function (methodName) {
+    // Get a registered actroller action - format: controller@method
+    this.getAction = function (action) {
         var retval = null;
-        var controllerNMethod = methodName.split("@");
+        var controllerNMethod = action.split("@");
         if (controllerNMethod.length == 2) {
             if (this.controllers.hasOwnProperty(controllerNMethod[0])) {
                 retval = this.controllers[controllerNMethod[0]][controllerNMethod[1]];
