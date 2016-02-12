@@ -31,7 +31,7 @@ function IO(controllerLoader, routeName, sessionManager) {
         this.session = req.session;
     };
     this.bindSocketIO = function (data, session) {
-        this.type = "socketIO";
+        this.type = "socket.io";
         this.session = session;
         this.inputs = data;
     };
@@ -45,7 +45,9 @@ function IO(controllerLoader, routeName, sessionManager) {
         this.header("Connection", "close");
         this.build();
         this.p.tos.forEach(function (session) {
-            session.socket.emit(self.p.toEvent, data);
+            if (session.socket != null) {
+                session.socket.emit(self.p.toEvent, data);
+            }
         });
         if (this.type === "http") {
             this.response.end((!(typeof data === "string")) ? JSON.stringify(data) : data);

@@ -94,7 +94,15 @@ function RouteLoader() {
         if (typeof action === "function") {
             action(io);
         } else if (typeof action === "string") {
-            self.controllerLoader.getAction(action)(io);
+            var actionFn = self.controllerLoader.getAction(action);
+            if (actionFn != null) {
+                actionFn(io);
+            } else {
+                io.status(404).json({
+                    status: 404,
+                    result: "page not found"
+                });
+            }
         }
         // call after-filter
         if (filters != null && filters.after != null) {
