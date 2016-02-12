@@ -23,6 +23,20 @@ function Memory(config) {
         sessionData[sessionId][key] = value;
         return true;
     };
+    this.remove = function (sessionId, key) {
+        var retval = false;
+        key = key.hash();
+        if (sessionData[sessionId] != null && sessionData[sessionId][key] != null) {
+            delete sessionData[sessionId][key];
+            retval = true;
+        }
+        return retval;
+    };
+    this.pull = function (sessionId, key, defaultValue) {
+        var retval = this.get(sessionId, key, defaultValue);
+        this.remove(sessionId, key);
+        return retval;
+    };
     this.getSessions = function () {
         return {};
     };

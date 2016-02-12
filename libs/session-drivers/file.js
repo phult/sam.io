@@ -37,6 +37,24 @@ function File(config) {
         }
         return retval;
     };
+    this.remove = function (sessionId, key) {
+        var retval = false;
+        key = key.hash();
+        try {
+            var sessionFile = sessionStorage + "/" + sessionId + "/" + key;
+            if (fs.existsSync(sessionFile)) {
+                fs.unlinkSync(sessionFile);
+                retval = true;
+            }
+        } catch (e) {
+        }
+        return retval;
+    };
+    this.pull = function (sessionId, key, defaultValue) {
+        var retval = this.get(sessionId, key, defaultValue);
+        this.remove(sessionId, key);
+        return retval;
+    };
     this.getSessions = function () {
         var self = this;
         var sessions = {};
