@@ -3,36 +3,35 @@ global.__dir = __dirname;
 var util = require(__dir + "/core/util");
 var sessionManager = require(__dir + "/core/session/session-manager");
 var httpServer = require(__dir + "/core/net/http-server");
-var controllerLoader = require(__dir + "/core/routing/controller-loader");
-var routerLoader = require(__dir + "/core/routing/route-loader");
+var autoLoader = require(__dir + "/core/loader/auto-loader");
+var routerLoader = require(__dir + "/core/loader/route-loader");
 var httpConnection = require(__dir + "/core/net/http-connection");
 var socketIOConnection = require(__dir + "/core/net/socket-io-connection");
 // config files
 var packageCfg = require(__dir + "/package.json");
-var bootstrapPaths = require(__dir + "/config/paths");
-var controllers = require(__dir + "/start/controllers");
-var routes = require(__dir + "/start/routes");
+var pathsCfg = require(__dir + "/config/paths");
 var appCfg = require(__dir + "/config/app");
 var sessionCfg = require(__dir + "/config/session");
+var routes = require(__dir + "/start/routes");
+
 
 var App = function () {
     this.start = function () {
+        util.log("===========================================================");
+        util.log("");
+        util.log("  /|| ||\\ | ||  " + packageCfg.name + " - version " + packageCfg.version);
+        util.log(" /_|| ||_| \\||  " + packageCfg.homepage);
+        util.log("");
         sessionManager.start(sessionCfg);
-        controllerLoader.loadDirectory(__dir + bootstrapPaths.controllers);
-        controllerLoader.loadConfiguration(controllers);
+        autoLoader.loadConfiguration(pathsCfg.autoload);
         httpConnection.listen(httpServer);
         socketIOConnection.listen(httpServer, sessionManager);
-        routerLoader.load(controllerLoader, httpConnection, socketIOConnection, sessionManager);
+        routerLoader.load(autoLoader, httpConnection, socketIOConnection, sessionManager);
         routes(routerLoader);
         httpServer.listen(appCfg.port, sessionManager);
-        util.log("");
-        util.log("   /|| ||\\ | ||  " + packageCfg.name + " - version " + packageCfg.version);
-        util.log("  /_|| ||_| \\||  " + packageCfg.homepage);
-        util.log("");
         util.log("Start time:  " + util.now());
         util.log("Port:        " + appCfg.port);
-        util.log("Debug mode:  " + appCfg.debug);
-        util.log("===========================================================");
+        util.log("Debug mode:  " + appCfg.debug);        
         process.on("uncaughtException", function (err) {
             console.error("uncaughtException: " + err.message);
             console.error(err.stack);

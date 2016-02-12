@@ -10,11 +10,11 @@ var IO = require("../io/io");
 /** Modules **/
 function RouteLoader() {
     this.filterContainer = [];
-    this.load = function (controllerLoader, httpConnection, socketIOConnection, sessionManager) {
+    this.load = function (autoLoader, httpConnection, socketIOConnection, sessionManager) {
         this.sessionManager = sessionManager;
         this.socketIOConnection = socketIOConnection;
         this.httpConnection = httpConnection;
-        this.controllerLoader = controllerLoader;
+        this.autoLoader = autoLoader;
     };
     this.any = function (routeName, route, filters) {
         this.io(routeName, route, filters);
@@ -25,7 +25,7 @@ function RouteLoader() {
     this.io = function (routeName, action, filters) {
         var self = this;
         this.socketIOConnection.addMessageListener(routeName, function (data, session) {
-            var io = new IO(self.controllerLoader, routeName, self.sessionManager);
+            var io = new IO(self.autoLoader, routeName, self.sessionManager);
             io.bindSocketIO(data, session);
             executeAction(self, action, io, filters);
         });
@@ -34,7 +34,7 @@ function RouteLoader() {
     this.get = function (routeName, action, filters) {
         var self = this;
         this.httpConnection.get(routeName, function (req, res) {
-            var io = new IO(self.controllerLoader, routeName, self.sessionManager);
+            var io = new IO(self.autoLoader, routeName, self.sessionManager);
             io.bindHttp(req, res);
             executeAction(self, action, io, filters);
         });
@@ -43,7 +43,7 @@ function RouteLoader() {
     this.post = function (routeName, action, filters) {
         var self = this;
         this.httpConnection.post(routeName, function (req, res) {
-            var io = new IO(self.controllerLoader, routeName, self.sessionManager);
+            var io = new IO(self.autoLoader, routeName, self.sessionManager);
             io.bindHttp(req, res);
             executeAction(self, action, io, filters);
         });
@@ -94,7 +94,7 @@ function RouteLoader() {
         if (typeof action === "function") {
             action(io);
         } else if (typeof action === "string") {
-            var actionFn = self.controllerLoader.getAction(action);
+            var actionFn = self.autoLoader.getAction(action);
             if (actionFn != null) {
                 actionFn(io);
             } else {

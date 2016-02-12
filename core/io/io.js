@@ -8,8 +8,8 @@ module.exports = IO;
 var fs = require("fs");
 /** Modules **/
 var IOBuilder = require('./io-builder');
-function IO(controllerLoader, routeName, sessionManager) {
-    this.controllerLoader = controllerLoader;
+function IO(autoloader, routeName, sessionManager) {
+    this.autoLoader = autoloader;
     this.routeName = routeName;
     this.sessionManager = sessionManager;
     this.p = {
@@ -98,7 +98,7 @@ function IO(controllerLoader, routeName, sessionManager) {
         if (typeof action === "function") {
             action(this);
         } else if (typeof action === "string") {
-            this.controllerLoader.getAction(action)(this);
+            this.autoLoader.getAction(action)(this);
         }
     };
     /**
