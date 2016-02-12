@@ -8,7 +8,7 @@ module.exports = IOBuilder;
 /** Imports **/
 var util = require("../util");
 /** Modules **/
-function IOBuilder() {    
+function IOBuilder() {
     this.type = function (type) {
         this.p.type = type;
         return this;
@@ -51,30 +51,30 @@ function IOBuilder() {
         return this;
     };
     this.build = function () {
-        this.buildHttp();
-        this.buildReceiver();
+        buildHttp.bind(this)();
+        buildReceiver.bind(this)();
     };
-    this.buildHttp = function () {
+    /** Utils **/
+    function buildHttp() {
         if (this.response != null) {
             this.response.writeHead(this.p.status, this.p.headers);
         }
-    };
-    this.buildReceiver = function () {
-        var self = this;
+    }
+    function buildReceiver() {
         // build emit event
         this.p.toEvent = (this.p.toEvent === null ? this.routeName : this.p.toEvent);
         // build received io sessions
-        var socketIOSessions = this.sessionManager.getSessions("socketIO");
+        var socketIOSessions = this.sessionManager.getSessions("socket.io");
         if (this.p.isToAll) {
             this.p.tos = socketIOSessions;
         } else {
-            if (this.session != null && this.session.type === "socketIO") {
+            if (this.session != null && this.session.type === "socket.io") {
                 this.p.tos.push(this.session);
             }
             for (var property in this.p.toCriterias) {
                 socketIOSessions.forEach(function (session) {
-                    if (session[property] == self.p.toCriterias[property]) {
-                        self.p.tos.push(session);
+                    if (session[property] == this.p.toCriterias[property]) {
+                        this.p.tos.push(session);
                     }
                 });
             }
@@ -87,5 +87,5 @@ function IOBuilder() {
             }
         }
         this.p.tos = util.arrayRemoveItems(this.p.tos, this.p.toExpections);
-    };
+    }
 }

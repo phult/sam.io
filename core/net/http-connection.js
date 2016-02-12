@@ -17,7 +17,7 @@ function HttpConnection() {
         var self = this;
         var url = req.url;
         if (req.method == "GET") {
-            var callback = self.getCallback("GET", url);
+            var callback = getCallback.bind(this)("GET", url);
             if (callback != null) {
                 req.inputs = self.getInputs(url);
                 callback(req, res, url);
@@ -38,7 +38,7 @@ function HttpConnection() {
             });
             req.on("end", function () {
                 req.inputs = self.getInputs(body);
-                var callback = self.getCallback("POST", url);
+                var callback = getCallback.bind(this)("POST", url);
                 if (callback != null) {
                     callback(req, res);
                 } else {
@@ -66,13 +66,15 @@ function HttpConnection() {
     this.post = function (url, callback) {
         this.postAPIs[url] = callback;
     };
-    this.getCallback = function (type, url) {
+    /** Utils **/
+    function getCallback(type, url) {
         var retval;
         if (type.toUpperCase() === "GET") {
+            url = url.split("?")[0];
             retval = this.getAPIs[url];
         } else if (type.toUpperCase() === "POST") {
             retval = this.postAPIs[url];
         }
         return retval;
-    };
+    }
 }

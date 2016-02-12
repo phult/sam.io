@@ -17,7 +17,7 @@ function SessionManager() {
         driver = new (require(__dir + pathConfig["sessionDrivers"] + "/" + config.driver))(config);
         sessions = driver.getSessions();
         setInterval(function () {
-            self.destroyExpiredSessions();
+            destroyExpiredSessions.bind(self)();
         }, this.interval);
     };
     this.initHTTPSession = function (request, response) {
@@ -66,19 +66,14 @@ function SessionManager() {
             };
         }
         retval.lastActive = Date.now();
-        retval.get = function (key, value, defaultValue) {
-            return driver.get(retval.id, key, value, defaultValue);
-        };
-        retval.set = function (key, value) {
-            return driver.set(retval.id, key, value);
-        };
+        bindSessionMethods(retval);
         retval.set("_type_", retval.type);
         retval.set("_lastActive_", retval.lastActive);
         return retval;
     };
     this.initSocketIOSession = function (socket) {
         var retval = {
-            type: "socketIO"
+            type: "socket.io"
         };
         var userId = socket.handshake.query.userId;
         retval.id = socket.id;
@@ -91,12 +86,7 @@ function SessionManager() {
                 retval[param] = socket.handshake.query[param];
             });
         }
-        retval.get = function (key, value, defaultValue) {
-            return driver.get(retval.id, key, value, defaultValue);
-        };
-        retval.set = function (key, value) {
-            return driver.set(retval.id, key, value);
-        };
+        bindSessionMethods(retval);
         retval.set("_type_", retval.type);
         retval.set("_lastActive_", retval.lastActive);
         // add to sessions
@@ -168,10 +158,10 @@ function SessionManager() {
                 }
                 break;
             }
-            case "socketIO":
+            case "socket.io":
             {
                 for (var sessionId in sessions) {
-                    if (sessions[sessionId].type == "socketIO") {
+                    if (sessions[sessionId].type == "socket.io") {
                         retval.push(sessions[sessionId]);
                     }
                 }
@@ -201,10 +191,14 @@ function SessionManager() {
         }
         return retval;
     };
+
+    /** Utils **/
+
     /**
      * Find expired sessions and destroy them
      */
-    this.destroyExpiredSessions = function () {
+    function destroyExpiredSessions() {
+        // httpd sessions
         var httpSessions = this.getSessions("http");
         for (var i = 0; i < httpSessions.length; i++) {
             var session = httpSessions[i];
@@ -212,5 +206,28 @@ function SessionManager() {
                 this.destroy(session);
             }
         }
-    };
+        // socket.io sessions
+        var socketIOSessions = this.getSessions("socket.io");
+        for (var i = 0; i < socketIOSessions.length; i++) {
+            var session = socketIOSessions[i];
+            if (session.socket == null) {
+                this.destroy(session);
+            }
+        }
+
+    }
+    function bindSessionMethods(session) {
+        session.get = function (key, defaultValue) {
+            return driver.get(session.id, key, defaultValue);
+        };
+        session.set = function (key, value) {
+            return driver.set(session.id, key, value);
+        };
+        session.remove = function (key) {
+            return driver.remove(session.id, key);
+        };
+        session.pull = function (key, defaultValue) {
+            return driverpullset(session.id, key, defaultValue);
+        };
+    }
 }

@@ -20,21 +20,12 @@ function SocketIOConnection() {
         this.messageListeners[namespace] = listener;
     };
     /**
-     * Add A messsage listener
-     * @param {interface[onConnectionEvent]} listener
+     * Add a messsage listener
+     * @param {function} listener
      * @returns {bool}
      */
     this.addConnectionListener = function (listener) {
         this.connectionListeners.push(listener);
-    };
-    this.onConnectionEvent = function (type, data) {
-        for (var i = 0; i < this.connectionListeners.length; i++) {
-            try {
-                this.connectionListeners[i](type, data);
-            } catch (exc) {
-
-            }
-        }
     };
     this.sendMessage = function (toUserId, type, message, ignoredClientSession) {
         var users = this.sessionManager.getUserSessions(toUserId);
@@ -54,16 +45,6 @@ function SocketIOConnection() {
             users[i].socket.emit(type, message);
         }
     };
-    this.bindSocketMessageToListeners = function (socket, session) {
-        var self = this;
-        for (var namespace in self.messageListeners) {
-            if (self.messageListeners[namespace] != null) {
-                socket.on(namespace, function (data) {
-                    self.messageListeners[namespace](data, session);
-                });
-            }
-        }
-    };
     this.listen = function (httpServer, sessionManager) {
         var self = this;
         this.sessionManager = sessionManager;
@@ -72,16 +53,37 @@ function SocketIOConnection() {
             // Initialize session
             var session = self.sessionManager.initSocketIOSession(socket);
             // Fire connection event
-            self.onConnectionEvent("connection", session);
-            // Receive a message from the client
-            self.bindSocketMessageToListeners(socket, session);
-            // Client disconnect
+            onConnectionEvent.bind(self)("connection", session);
             socket.on("disconnect", function () {
-                // Remove from sessions
-                var session = self.sessionManager.getSessionBySocket(socket);
-                self.sessionManager.destroy(session);
-                self.onConnectionEvent("disconnect", session);
+                onConnectionEvent.bind(self)("disconnect", session);
             });
+            // Receive a message from the client
+            bindSocketMessageToListeners.bind(self)(socket, session);
         });
     };
+    /** Utils **/
+    function bindSocketMessageToListeners(socket, session) {
+        var self = this;
+        for (var namespace in self.messageListeners) {
+            if (self.messageListeners[namespace] != null) {
+                socket.on(namespace, function (data) {
+                    self.messageListeners[namespace](data, session);
+                });
+            }
+        }
+    }
+    function onConnectionEvent(type, session) {
+        // Remove from sessions
+        if (type === "disconnect") {
+            this.sessionManager.destroy(session);
+        }
+        // Pass event to listeners
+        for (var i = 0; i < this.connectionListeners.length; i++) {
+            try {
+                this.connectionListeners[i](type, session);
+            } catch (exc) {
+
+            }
+        }
+    }
 }

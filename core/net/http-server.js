@@ -10,11 +10,11 @@ module.exports = new HttpServer();
 /** Modules **/
 function HttpServer() {
     var self = this;
-    this.listeners = [];
+    var listeners = [];
     this.server = http.createServer(function (req, res) {
         req.session = self.sessionManager.initHTTPSession(req, res);
-        for (var i = 0; i < self.listeners.length; i++) {
-            self.listeners[i].onConnection(req, res);
+        for (var i = 0; i < listeners.length; i++) {
+            listeners[i].onConnection(req, res);
         }
     });
     /**
@@ -36,14 +36,14 @@ function HttpServer() {
     this.addConnectionListener = function (listener) {
         var retval = false;
         var isExisted = false;
-        for (var i = 0; i < this.listeners.length; i++) {
-            if (this.listeners[i] == listener) {
+        for (var i = 0; i < listeners.length; i++) {
+            if (listeners[i] == listener) {
                 isExisted = true;
                 break;
             }
         }
         if (!isExisted) {
-            this.listeners.push(listener);
+            listeners.push(listener);
             retval = true;
         }
         return retval;
@@ -56,14 +56,14 @@ function HttpServer() {
     this.removeConnectionListener = function (listener) {
         var retval = false;
         var itemIdx = -1;
-        for (var i = 0; i < this.listeners.length; i++) {
-            if (this.listeners[i] == listener) {
+        for (var i = 0; i < listeners.length; i++) {
+            if (listeners[i] == listener) {
                 itemIdx = i;
                 break;
             }
         }
         if (itemIdx > -1) {
-            this.listeners.splice(itemIdx, 1);
+            listeners.splice(itemIdx, 1);
             retval = true;
         }
         return retval;
