@@ -23,7 +23,7 @@ function AuthController() {
         io.json(respondData);
     };
     this.logout = function (io) {
-        io.session.remove("user");
+        io.session.destroy();
         io.json({
             status: "successful",
             result: "logout"

@@ -227,7 +227,10 @@ function SessionManager() {
             return driver.remove(session.id, key);
         };
         session.pull = function (key, defaultValue) {
-            return driverpullset(session.id, key, defaultValue);
+            return driver.pull(session.id, key, defaultValue);
+        };
+        session.destroy = function () {
+            return driver.destroy(session.id);
         };
     }
 }
