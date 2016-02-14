@@ -29,7 +29,7 @@ String.prototype.hash = function () {
  * @param {String} replacement
  * @returns {String}
  */
-String.prototype.replaceAll = function(search, replacement) {    
+String.prototype.replaceAll = function (search, replacement) {
     return this.split(search).join(replacement);
 };
 function Util() {
@@ -149,17 +149,19 @@ function Util() {
     this.browseFiles = function (directory) {
         var retval = [];
         var self = this;
-        fs.readdirSync(directory).forEach(function (item) {
-            var subPath = directory + "/" + item;
-            if (fs.lstatSync(subPath).isDirectory()) {
-                var files = self.browseFiles(subPath);
-                if (files.length > 0) {
-                    retval = retval.concat(files);
+        if (fs.existsSync(directory)) {
+            fs.readdirSync(directory).forEach(function (item) {
+                var subPath = directory + "/" + item;
+                if (fs.lstatSync(subPath).isDirectory()) {
+                    var files = self.browseFiles(subPath);
+                    if (files.length > 0) {
+                        retval = retval.concat(files);
+                    }
+                } else {
+                    retval.push(subPath);
                 }
-            } else {
-                retval.push(subPath);
-            }
-        });
+            });
+        }
         return retval;
     };
 }
