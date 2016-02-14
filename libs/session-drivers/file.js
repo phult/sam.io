@@ -5,7 +5,7 @@
 module.exports = File;
 var Driver = require(__dir + "/core/session/driver");
 var fs = require("fs");
-var util = require(__dir + '/core/util');
+var util = require(__dir + '/core/app/util');
 function File(config) {
     var sessionStorage = config.storage;
     if (!fs.existsSync(sessionStorage)) {

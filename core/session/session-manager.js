@@ -4,7 +4,7 @@
  */
 module.exports = new SessionManager();
 var pathConfig = require(__dir + "/config/paths");
-var util = require("../../core/util");
+var util = require("../../core/app/util");
 var sessions = {};
 var driver = null;
 function SessionManager() {
@@ -52,7 +52,7 @@ function SessionManager() {
             response.writeHead = function (statusCode) {
                 var reasonPhrase = "", headers = {};
                 if (2 == arguments.length) {
-                    if ("string" == typeof arguments[1]) {
+                    if (typeof arguments[1] === "string") {
                         reasonPhrase = arguments[1];
                     } else {
                         headers = arguments[1];

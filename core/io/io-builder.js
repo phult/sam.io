@@ -6,7 +6,7 @@
 /** Exports **/
 module.exports = IOBuilder;
 /** Imports **/
-var util = require("../util");
+var util = require("../app/util");
 /** Modules **/
 function IOBuilder() {
     this.type = function (type) {

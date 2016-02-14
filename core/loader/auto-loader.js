@@ -5,11 +5,11 @@
  */
 
 /** Exports **/
-module.exports = new autoLoader();
+module.exports = new AutoLoader();
 /** Imports **/
-var util = require("../util");
+var util = require("../app/util");
 /** Modules **/
-function autoLoader() {
+function AutoLoader() {
     this.classMap = [];
     /**
      * Load a class into container
@@ -45,9 +45,11 @@ function autoLoader() {
         classPaths.forEach(function (classPath) {
             if (classPath.indexOf(".js") === (classPath.length - 3)) {
                 var ClassFile = require(classPath);
-                var obj = new ClassFile();
-                var className = (obj.namespace != null ? obj.namespace + "/" : "") + ClassFile.prototype.constructor.name;
-                self.load(className, obj);
+                if (typeof ClassFile === "function") {
+                    var obj = new ClassFile();
+                    var className = (obj.namespace != null ? obj.namespace + "/" : "") + ClassFile.prototype.constructor.name;
+                    self.load(className, obj);
+                }
             }
         });
     };

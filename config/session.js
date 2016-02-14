@@ -1,5 +1,5 @@
 module.exports = {
-    /** Session timeout: minutes **/
+    /** Session timeout: in minutes **/
     timeout: 30,
     /** Session driver: file, memory **/
     driver: "file",

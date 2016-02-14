@@ -1,6 +1,6 @@
 global.__dir = __dirname;
 // core modules
-var util = require(__dir + "/core/util");
+var util = require(__dir + "/core/app/util");
 var sessionManager = require(__dir + "/core/session/session-manager");
 var httpServer = require(__dir + "/core/net/http-server");
 var autoLoader = require(__dir + "/core/loader/auto-loader");

@@ -23,6 +23,15 @@ String.prototype.hash = function () {
     }
     return retval;
 };
+/**
+ * Replace all search string in a string
+ * @param {String} search
+ * @param {String} replacement
+ * @returns {String}
+ */
+String.prototype.replaceAll = function(search, replacement) {    
+    return this.split(search).join(replacement);
+};
 function Util() {
     this.now = function () {
         var date = new Date();
