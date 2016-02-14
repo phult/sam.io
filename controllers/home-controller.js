@@ -1,5 +1,6 @@
 module.exports = HomeController;
 function HomeController() {
+    var self = this;
     this.index = function (io) {
         // get session data
         var user = io.session.get("user", null);
@@ -17,7 +18,7 @@ function HomeController() {
                     .header("Content-Length", responseData.length)
                     .make(responseData);
         }
-        // redirect to login action
+        // delegate to login action
         else {
             io.delegate("User/AuthController@login");
         }

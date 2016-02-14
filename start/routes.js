@@ -1,4 +1,4 @@
-var util = require(__dir + "/core/util");
+var util = require(__dir + "/core/app/util");
 module.exports = function (route) {
 
     /** Register HTTP requests **/
@@ -7,6 +7,7 @@ module.exports = function (route) {
     });
     route.get("/home", "HomeController@index");
     route.any("/login", "User/AuthController@login");
+    route.get("/logout", "User/AuthController@logout");
     route.get("/download", "HomeController@download",
             {
                 before: ["auth", function (io) {
