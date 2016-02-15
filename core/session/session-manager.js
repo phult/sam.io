@@ -14,7 +14,7 @@ function SessionManager() {
     this.start = function (config) {
         var self = this;
         this.timeout = config.timeout * 60 * 1000;
-        driver = new (require(__dir + pathConfig["sessionDrivers"] + "/" + config.driver))(config);
+        driver = new (require(__dir + config.driverPath + "/" + config.driver))(config);
         sessions = driver.getSessions();
         setInterval(function () {
             destroyExpiredSessions.bind(self)();

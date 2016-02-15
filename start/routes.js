@@ -1,4 +1,4 @@
-var util = require(__dir + "/core/app/util");
+var logger = (require(__dir + "/core/log/logger-factory")).getLogger();
 module.exports = function (route) {
 
     /** Register HTTP requests **/
@@ -11,10 +11,10 @@ module.exports = function (route) {
     route.get("/download", "HomeController@download",
             {
                 before: ["auth", function (io) {
-                        util.log("processing a download request");
+                        logger.debug("processing a download request");
                     }],
                 after: function (io) {
-                    util.log("finished a download request");
+                    logger.debug("finished a download request");
                 }
             }
     );
