@@ -67,29 +67,6 @@ function Util() {
         }
         return result;
     };
-    this.log = function (message, type, option) {
-        if (option != null) {
-            if (option.timeDisp) {
-                message = this.now() + ": " + message;
-            }
-        }
-        switch (type) {
-            case "error":
-            {
-                console.error(message);
-                break;
-            }
-            case "warn":
-            {
-                console.warn(message);
-                break;
-            }
-            default:
-            {
-                console.log(message);
-            }
-        }
-    };
     this.parseObjectToRequestURL = function (obj) {
         var retval = "";
         var index = 0;
