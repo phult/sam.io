@@ -32,6 +32,18 @@ String.prototype.hash = function () {
 String.prototype.replaceAll = function (search, replacement) {
     return this.split(search).join(replacement);
 };
+/**
+ * Check string is matched a wildcard
+ * @param {String} wildcard
+ * @returns {Boolean}
+ */
+String.prototype.matchWildcard = function (wildcard) {
+    wildcard = wildcard.replace(/[\-\[\]\/\{\}\(\)\+\.\\\^\$\|]/g, "\\$&");
+    wildcard = wildcard.replace(/\*/g, ".*");
+    wildcard = wildcard.replace(/\?/g, ".");
+    var regEx = new RegExp(wildcard, "i");
+    return regEx.test(this);
+};
 function Util() {
     this.now = function () {
         var date = new Date();

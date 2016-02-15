@@ -12,7 +12,7 @@ function Event() {
     var listenerContainer = {};
     /**
      * Subscribe a event
-     * @param {String} event
+     * @param {String} event Supporting widcard
      * @param {String|function} listener
      */
     this.listen = function (event, listener) {
@@ -27,21 +27,23 @@ function Event() {
      * @param {object} params
      */
     this.fire = function (event, params) {
-        var listeners = listenerContainer[event];
-        if (listeners != null && listeners.length > 0) {
-            listeners.forEach(function (listener) {
-                if (typeof listener === "string") {
-                    listener = autoLoader.getAction(listener);
-                }
-                if (listener != null) {
-                    // Call the listener
-                    var result = listener(event, params);
-                    // Stop the propagation of the event if the listener returns false result
-                    if (!result) {
-                        return;
+        for (var eventListener in listenerContainer) {
+            if (event.matchWildcard(eventListener)) {
+                listeners = listenerContainer[eventListener];
+                listeners.forEach(function (listener) {
+                    if (typeof listener === "string") {
+                        listener = autoLoader.getAction(listener);
                     }
-                }
-            });
+                    if (listener != null) {
+                        // Call the listener
+                        var result = listener(event, params);
+                        // Stop the propagation of the event if the listener returns false result
+                        if (!result) {
+                            return;
+                        }
+                    }
+                });
+            }
         }
     };
 }

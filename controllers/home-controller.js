@@ -1,7 +1,10 @@
 module.exports = HomeController;
-function HomeController() {
+var loggerFactory = require(__dir + '/core/log/logger-factory');
+function HomeController($config, $event, $logger) {
     var self = this;
     this.index = function (io) {
+        // fire a event
+        $event.fire("home.index", {controller: "home", action: "index"});
         // get session data
         var user = io.session.get("user", null);
         // user logged in
@@ -26,7 +29,7 @@ function HomeController() {
     this.broadcast = function (io) {
         var responseData = {
             status: "successful",
-            result: []
+            result: io.inputs
         };
         // respond to other sessions
         io.toEvent("message").toAll().toExpection(io.session).json(responseData);
