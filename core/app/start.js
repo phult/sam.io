@@ -1,5 +1,5 @@
-module.exports = new Application();
-
+/** Imports **/
+var fs = require("fs");
 var config = require(__dir + "/core/app/config");
 var util = require(__dir + "/core/app/util");
 var sessionManager = require(__dir + "/core/session/session-manager");
@@ -11,11 +11,14 @@ var socketIOConnection = require(__dir + "/core/net/socket-io-connection");
 var routes = require(__dir + "/start/routes");
 var packageCfg = require(__dir + "/package.json");
 var loggerFactory = require(__dir + "/core/log/logger-factory");
-
+var serviceProvider = require(__dir + "/core/ioc/service-provider");
+var serviceProviderRegister = require(__dir + "/config/service-providers");
+/** Exports **/
+module.exports = new Application();
+/** Modules **/
 function Application() {
-    var logger = null;
+    var logger = loggerFactory.getLogger(this);
     this.start = function () {
-        logger = loggerFactory.getLogger(this);
         displayAppInfo();
         boot();
         displayConfiguration();
@@ -23,11 +26,11 @@ function Application() {
     };
     function boot() {
         sessionManager.start(config.get("session"));
-        autoLoader.loadConfiguration(config.get("paths.autoload"));
+        routerLoader.load(autoLoader, httpConnection, socketIOConnection, sessionManager);
+        serviceProviderRegister(serviceProvider);
+        autoLoader.loadConfiguration(config.get("app.autoload"));
         httpConnection.listen(httpServer);
         socketIOConnection.listen(httpServer, sessionManager);
-        routerLoader.load(autoLoader, httpConnection, socketIOConnection, sessionManager);
-        routes(routerLoader);
         httpServer.listen(config.get("app.port"), sessionManager);
     }
     function handleExceptions() {

@@ -3,7 +3,6 @@
  * Jan 11, 2016
  */
 module.exports = new SessionManager();
-var pathConfig = require(__dir + "/config/paths");
 var util = require("../../core/app/util");
 var sessions = {};
 var driver = null;

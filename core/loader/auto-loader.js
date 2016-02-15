@@ -8,6 +8,7 @@
 module.exports = new AutoLoader();
 /** Imports **/
 var util = require("../app/util");
+var serviceProvider = require("../ioc/service-provider");
 /** Modules **/
 function AutoLoader() {
     this.classMap = [];
@@ -37,23 +38,40 @@ function AutoLoader() {
     };
     /**
      * Load all classes from a directory
-     * @param String directory
+     * @param {String} directory
      */
     this.loadDirectory = function (directory) {
         var self = this;
         var classPaths = util.browseFiles(directory);
         classPaths.forEach(function (classPath) {
             if (classPath.indexOf(".js") === (classPath.length - 3)) {
+                // Require the class
                 var ClassFile = require(classPath);
                 if (typeof ClassFile === "function") {
-                    var obj = new ClassFile();
-                    var className = (obj.namespace != null ? obj.namespace + "/" : "") + ClassFile.prototype.constructor.name;
-                    self.load(className, obj);
+                    // Build constructor params
+                    var paramValues = [ClassFile];
+                    var paramNames = util.getFunctionParamNames(ClassFile);
+                    paramNames.forEach(function (paramName) {
+                        paramValues.push(serviceProvider.make(paramName));
+                    });
+                    // Create instance with constructor params
+                    var obj = new (ClassFile.bind.apply(ClassFile, paramValues))();
+                    // Load to Class-map
+                    if (ClassFile.prototype != null && ClassFile.prototype.constructor != null) {
+                        var className = (obj.namespace != null ? obj.namespace + "/" : "") + ClassFile.prototype.constructor.name;
+                        self.load(className == "" ? util.randomString() : className, obj);
+                    } else {
+                        self.load(util.randomString(), obj);
+                    }
                 }
             }
         });
     };
-    // Get a registered action - format: class@method
+    /**
+     * Get a registered action 
+     * @param {String} action Format: class@method  
+     * @return {function}
+     */
     this.getAction = function (action) {
         var retval = null;
         var classNMethod = action.split("@");
