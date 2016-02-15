@@ -15,6 +15,7 @@ function LoggerFactory() {
      */
     this.getLogger = function (obj) {
         var logConfig = config.get("log");
+        logConfig.debug = config.get("app.debug");
         return new (require(__dir + logConfig.loggerPath + "/" + logConfig.logger))(obj, logConfig);
     };
 }

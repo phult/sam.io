@@ -12,7 +12,7 @@ function L4aLogger(obj, config) {
     var colors = {
         normal: "\033[0m",
         info: "\033[0m",
-        debug: "\033[34m",
+        debug: "\033[32m",
         warning: "\033[33m",
         error: "\033[31m"
     };
@@ -34,10 +34,13 @@ function L4aLogger(obj, config) {
     };
 
     function log(type, msg, outputData) {
+        if (type === "debug" && config.debug === false) {
+            return;
+        }
         msg = msg == null ? "" : msg;
         outputData = outputData == null ? "" : outputData;
-        objName = (typeof obj == "string") ? obj : obj.constructor.name;
-        if (type != "info") {
+        objName = (typeof obj === "string") ? obj : obj.constructor.name;
+        if (type !== "info") {
             msg = "[" + new Date() + "] [" + type + "] " + objName + ": " + msg;
         }
         console.log(colors[type] + msg + colors.normal, outputData);
