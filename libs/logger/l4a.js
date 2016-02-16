@@ -44,7 +44,12 @@ function L4aLogger(obj, config) {
             msg = "[" + new Date() + "] [" + type + "] " + objName + ": " + msg;
         }
         console.log(colors[type] + msg + colors.normal, outputData);
-        fs.appendFile(config.storage + "/adu.log", msg + " " + (outputData != "" ? JSON.stringify(outputData) : "") + " \r\n", function (err) {});
+        var outputDataStr = "";
+        try {
+            outputDataStr = JSON.stringify(outputData);
+        } catch (exc) {
+        }
+        fs.appendFile(config.storage + "/adu.log", msg + " " + (outputData != "" ? outputDataStr : "") + " \r\n", function (err) {});
     }
 }
 L4aLogger.prototype = new Logger();

@@ -6,6 +6,7 @@
 /** Exports **/
 module.exports = new SocketIOConnection();
 /** Imports **/
+var event = require(__dir + "/core/app/event");
 /** Classes **/
 function SocketIOConnection() {
     this.messageListeners = [];
@@ -73,6 +74,8 @@ function SocketIOConnection() {
         }
     }
     function onConnectionEvent(type, session) {
+        // Fire event
+        event.fire("connection.socketio." + type, session);
         // Remove from sessions
         if (type === "disconnect") {
             this.sessionManager.destroy(session);
@@ -82,7 +85,6 @@ function SocketIOConnection() {
             try {
                 this.connectionListeners[i](type, session);
             } catch (exc) {
-
             }
         }
     }

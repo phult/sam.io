@@ -6,6 +6,7 @@
 /** Exports **/
 module.exports = new HttpConnection();
 /** Imports **/
+var event = require(__dir + "/core/app/event");
 /** Classes **/
 function HttpConnection() {
     this.postAPIs = [];
@@ -14,6 +15,9 @@ function HttpConnection() {
         httpServer.addConnectionListener(this);
     };
     this.onConnection = function (req, res) {
+        // Fire event
+        event.fire("connection.http.request", req);
+        // Pass to listeners
         var self = this;
         var url = req.url;
         if (req.method == "GET") {

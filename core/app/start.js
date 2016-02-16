@@ -13,25 +13,35 @@ var packageCfg = require(__dir + "/package.json");
 var loggerFactory = require(__dir + "/core/log/logger-factory");
 var serviceProvider = require(__dir + "/core/ioc/service-provider");
 var serviceProviderRegister = require(__dir + "/config/service-providers");
+var event = require(__dir + "/core/app/event");
 /** Exports **/
 module.exports = new Application();
 /** Modules **/
 function Application() {
     var logger = loggerFactory.getLogger(this);
     this.start = function () {
+        handleExceptions();
         displayAppInfo();
         boot();
         displayConfiguration();
-        handleExceptions();
     };
     function boot() {
+        // Start client session manager
         sessionManager.start(config.get("session"));
+        // Load request routes
         routerLoader.load(autoLoader, httpConnection, socketIOConnection, sessionManager);
+        // Bind registed service providers
         serviceProviderRegister(serviceProvider);
+        // Load autoload classes
         autoLoader.loadConfiguration(config.get("app.autoload"));
+        // Start HTTP connection listener
         httpConnection.listen(httpServer);
+        // Start Socket.io connection listener
         socketIOConnection.listen(httpServer, sessionManager);
+        // Start http server
         httpServer.listen(config.get("app.port"), sessionManager);
+        // Fire event
+        event.fire("system.booted");
     }
     function handleExceptions() {
         process.on("uncaughtException", function (err) {
