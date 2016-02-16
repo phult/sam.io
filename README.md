@@ -33,7 +33,7 @@ and send a http request, then it should print out: "hello world"
     curl http://localhost:2307/
 
 # Installation
-Adu framework is simple to install:
+Adu framework is easy to install:
 
 1. Cloning the project: `$ git clone https://github.com/phult/adu.git`
 
@@ -51,15 +51,13 @@ The directory contains resource files.
 
 ## `/config`
 
-As the name imples, cantains all application configurations such as: application port, debug mode, session driver, controllers directory, etc.
+As the name imples, cantains all application configurations such as: application port, debug mode, session configuration, autoload class map, service providers, etc.
 
 ## `/controllers`
 
-The directory contains application controllers.
+The default directory contains application controllers.
 
-By default, all controllers in this directory will be loaded automatically at start time.
-
-You can always configure to load your custom controllers in `/start/controllers.js` file
+By default, all controllers in this directory will be loaded automatically at booting time that configured as autoload directory in `config.app` file.
 
 ## `/core`
 
@@ -73,11 +71,13 @@ Third-party libraries should be stored in this drectory.
 
 ## `/services`
 
-The directory for service classes.
+An autoloaded directory that used  as default directory for service classes.
 
 ## `/start`
 
-You will want to configure started parameters in this directory, including routes, service classes, custom controllers, etc.
+The directory loaded automatically at booting time
+
+You will want to set start parameters in this. Including routes, event listeners or anything that configured as autoloaded directory , etc.
 
 ## `/storage`
 
@@ -90,8 +90,13 @@ This directory may be used to store any files utilized by your application.
 Unit test classes should be stored in this directory.
 
 # Configuration
+# Autoload class map
 # Routing
-# Controller
+# Filters
+# Controllers
 # Inputs and Responses
 # Session
+#IoC
+#Services
 # Events
+# Logger
