@@ -1,5 +1,4 @@
 module.exports = HomeController;
-var loggerFactory = require(__dir + '/core/log/logger-factory');
 function HomeController($config, $event, $logger) {
     var self = this;
     this.index = function (io) {

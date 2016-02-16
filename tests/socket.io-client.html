@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Socket.io-client connection testing</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdn.socket.io/socket.io-1.4.3.js"></script>
+        <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var socket = io("http://localhost:2307");
+                socket.emit('broadcast', "hello");
+                socket.on('message', function (msg) {
+                    console.log("on message", msg);
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div>Socket.io-client connection testing</div>
+    </body>
+</html>
