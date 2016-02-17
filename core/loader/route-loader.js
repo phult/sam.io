@@ -10,11 +10,12 @@ var IO = require("../io/io");
 /** Modules **/
 function RouteLoader() {
     this.filterContainer = [];
-    this.load = function (autoLoader, httpConnection, socketIOConnection, sessionManager) {
-        this.sessionManager = sessionManager;
-        this.socketIOConnection = socketIOConnection;
-        this.httpConnection = httpConnection;
-        this.autoLoader = autoLoader;
+    this.load = function (initParams) {
+        this.sessionManager = initParams.sessionManager;
+        this.socketIOConnection = initParams.socketIOConnection;
+        this.httpConnection = initParams.httpConnection;
+        this.autoLoader = initParams.autoLoader;
+        this.viewEngine = initParams.viewEngine;
     };
     this.any = function (routeName, route, filters) {
         this.io(routeName, route, filters);
@@ -25,7 +26,12 @@ function RouteLoader() {
     this.io = function (routeName, action, filters) {
         var self = this;
         this.socketIOConnection.addMessageListener(routeName, function (data, session) {
-            var io = new IO(self.autoLoader, routeName, self.sessionManager);
+            var io = new IO({
+                autoLoader: self.autoLoader,
+                routeName: routeName,
+                sessionManager: self.sessionManager,
+                viewEngine: self.viewEngine
+            });
             io.bindSocketIO(data, session);
             executeAction(self, action, io, filters);
         });
@@ -34,7 +40,12 @@ function RouteLoader() {
     this.get = function (routeName, action, filters) {
         var self = this;
         this.httpConnection.get(routeName, function (req, res) {
-            var io = new IO(self.autoLoader, routeName, self.sessionManager);
+            var io = new IO({
+                autoLoader: self.autoLoader,
+                routeName: routeName,
+                sessionManager: self.sessionManager,
+                viewEngine: self.viewEngine
+            });
             io.bindHttp(req, res);
             executeAction(self, action, io, filters);
         });
@@ -43,7 +54,12 @@ function RouteLoader() {
     this.post = function (routeName, action, filters) {
         var self = this;
         this.httpConnection.post(routeName, function (req, res) {
-            var io = new IO(self.autoLoader, routeName, self.sessionManager);
+            var io = new IO({
+                autoLoader: self.autoLoader,
+                routeName: routeName,
+                sessionManager: self.sessionManager,
+                viewEngine: self.viewEngine
+            });
             io.bindHttp(req, res);
             executeAction(self, action, io, filters);
         });

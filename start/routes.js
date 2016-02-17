@@ -1,8 +1,9 @@
 var logger = (require(__dir + "/core/log/logger-factory")).getLogger();
-module.exports = function ($route) {
+module.exports = function ($route, $logger) {
     /** Register HTTP requests **/
     $route.get("/", function (io) {
-        io.make("hello world");
+        io.render("home",{});
+        //io.make("hello world");
     });
     $route.get("/home", "HomeController@index");
     $route.any("/login", "User/AuthController@login");

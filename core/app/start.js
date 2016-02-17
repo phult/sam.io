@@ -14,11 +14,13 @@ var loggerFactory = require(__dir + "/core/log/logger-factory");
 var serviceProvider = require(__dir + "/core/ioc/service-provider");
 var serviceProviderRegister = require(__dir + "/config/service-providers");
 var event = require(__dir + "/core/app/event");
+var viewEngineFactory = require(__dir + "/core/io/view/engine-factory");
 /** Exports **/
 module.exports = new Application();
 /** Modules **/
 function Application() {
     var logger = loggerFactory.getLogger(this);
+    var viewEngine = viewEngineFactory.getEngine(config.get("view"));
     this.start = function () {
         handleExceptions();
         displayAppInfo();
@@ -29,7 +31,13 @@ function Application() {
         // Start client session manager
         sessionManager.start(config.get("session"));
         // Load request routes
-        routerLoader.load(autoLoader, httpConnection, socketIOConnection, sessionManager);
+        routerLoader.load({
+            autoLoader: autoLoader,
+            httpConnection: httpConnection,
+            socketIOConnection: socketIOConnection,
+            sessionManager: sessionManager,
+            viewEngine: viewEngine
+        });
         // Bind registed service providers
         serviceProviderRegister(serviceProvider);
         // Load autoload classes

@@ -8,7 +8,7 @@ module.exports = L4aLogger;
 var Logger = require(__dir + "/core/log/logger");
 var fs = require("fs");
 /** Modules **/
-function L4aLogger(obj, config) {
+function L4aLogger(obj, options) {
     var colors = {
         normal: "\033[0m",
         info: "\033[0m",
@@ -34,7 +34,7 @@ function L4aLogger(obj, config) {
     };
 
     function log(type, msg, outputData) {
-        if (type === "debug" && config.debug === false) {
+        if (type === "debug" && options.debug === false) {
             return;
         }
         msg = msg == null ? "" : msg;
@@ -49,7 +49,7 @@ function L4aLogger(obj, config) {
             outputDataStr = JSON.stringify(outputData);
         } catch (exc) {
         }
-        fs.appendFile(config.storage + "/adu.log", msg + " " + (outputData != "" ? outputDataStr : "") + " \r\n", function (err) {});
+        fs.appendFile(options.storage + "/adu.log", msg + " " + (outputData != "" ? outputDataStr : "") + " \r\n", function (err) {});
     }
 }
 L4aLogger.prototype = new Logger();

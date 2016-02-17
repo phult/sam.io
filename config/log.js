@@ -1,7 +1,7 @@
 module.exports = {
-    /** Logger name **/
+    /** Default logger **/
     logger: "l4a",    
-    /** Logger path **/
+    /** Logger storage path **/
     loggerPath: "/libs/logger",
     /** Log storage path **/
     storage: __dir + "/storage/logs"
