@@ -5,7 +5,11 @@
 /** Exports **/
 module.exports = Logger;
 /** Modules **/
-function Logger(config) {
+/**
+ * @param {object|String} obj The object uses the logger
+ * @param {object} options
+ */
+function Logger(obj, options) {
     this.info = function (msg, outputData) {
         throw new Error("not implemented");
     };

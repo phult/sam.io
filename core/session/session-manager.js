@@ -4,6 +4,7 @@
  */
 module.exports = new SessionManager();
 var util = require("../../core/app/util");
+var Driver = require("./driver");
 var sessions = {};
 var driver = null;
 function SessionManager() {
@@ -13,7 +14,7 @@ function SessionManager() {
     this.start = function (config) {
         var self = this;
         this.timeout = config.timeout * 60 * 1000;
-        driver = new (require(__dir + config.driverPath + "/" + config.driver))(config);
+        driver = getDriver(config);
         sessions = driver.getSessions();
         setInterval(function () {
             destroyExpiredSessions.bind(self)();
@@ -231,5 +232,15 @@ function SessionManager() {
         session.destroy = function () {
             return driver.destroy(session.id);
         };
+    }
+    function getDriver(config) {
+        var retval = null;
+        var driver = new (require(__dir + config.driverPath + "/" + config.driver))(config);
+        if (driver instanceof Driver) {
+            retval = driver;
+        } else {
+            retval = new Driver();
+        }
+        return retval;
     }
 }
