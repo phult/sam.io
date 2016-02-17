@@ -5,7 +5,7 @@
     "author": "PhuLuong <phult.contact@gmail.com>",
     "keywords": ["framework", "http", "socket.io", "mvc", "lightweight", "server"],
     "license": "MIT",
-    "version": "0.5.3",
+    "version": "0.6.3",
     "main": "app.js",
     "contributors": [],
     "repository": {
@@ -13,6 +13,7 @@
         "url": "git+https://github.com/phult/adu.git"
     },
     "dependencies": {
-        "socket.io": "^1.3.7"
+        "socket.io": "1.*",
+        "ejs": "2.*"
     }
 }

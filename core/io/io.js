@@ -8,10 +8,11 @@ module.exports = IO;
 var fs = require("fs");
 /** Modules **/
 var IOBuilder = require('./io-builder');
-function IO(autoloader, routeName, sessionManager) {
-    this.autoLoader = autoloader;
-    this.routeName = routeName;
-    this.sessionManager = sessionManager;
+function IO(initParams) {
+    this.autoLoader = initParams.autoLoader;
+    this.routeName = initParams.routeName;
+    this.sessionManager = initParams.sessionManager;
+    this.viewEngine = initParams.viewEngine;
     this.p = {
         type: "http",
         status: 200,
@@ -86,9 +87,17 @@ function IO(autoloader, routeName, sessionManager) {
      * @param {object} data
      */
     this.render = function (view, data) {
+        var self = this;
+        this.header("Content-Type", "text/html; charset=UTF-8");
         this.header("Connection", "close");
         this.build();
-        // TODO
+        var content = this.viewEngine.render(view, data, {});
+        this.p.tos.forEach(function (session) {
+            session.socket.emit(self.p.toEvent, content);
+        });
+        if (this.type === "http") {
+            this.response.end(content);
+        }
     };
     /**
      * Create a new redirect response to a action
