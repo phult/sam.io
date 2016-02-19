@@ -11,7 +11,7 @@ var socketIOConnection = require(__dir + "/core/net/socket-io-connection");
 var routes = require(__dir + "/start/routes");
 var packageCfg = require(__dir + "/package.json");
 var loggerFactory = require(__dir + "/core/log/logger-factory");
-var serviceProvider = require(__dir + "/core/ioc/service-provider");
+var serviceContainer = require(__dir + "/core/ioc-container/service-container");
 var serviceProviderRegister = require(__dir + "/config/service-providers");
 var event = require(__dir + "/core/app/event");
 var viewEngineFactory = require(__dir + "/core/io/view/engine-factory");
@@ -39,7 +39,7 @@ function Application() {
             viewEngine: viewEngine
         });
         // Bind registed service providers
-        serviceProviderRegister(serviceProvider);
+        serviceProviderRegister(serviceContainer);
         // Load autoload classes
         autoLoader.loadConfiguration(config.get("app.autoload"));
         // Start HTTP connection listener

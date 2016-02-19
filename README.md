@@ -14,7 +14,7 @@ To get started, let's create a Controller to handler requests by creating new `h
     module.exports = HomeController;
     function HomeController() {
         this.helloworld = function (io) {
-            io.make("hello world");
+            io.echo("hello world");
         };
     }
 

@@ -10,12 +10,12 @@ var IO = require("../io/io");
 /** Modules **/
 function RouteLoader() {
     this.filterContainer = [];
-    this.load = function (initParams) {
-        this.sessionManager = initParams.sessionManager;
-        this.socketIOConnection = initParams.socketIOConnection;
-        this.httpConnection = initParams.httpConnection;
-        this.autoLoader = initParams.autoLoader;
-        this.viewEngine = initParams.viewEngine;
+    this.load = function (constructorProperties) {
+        this.sessionManager = constructorProperties.sessionManager;
+        this.socketIOConnection = constructorProperties.socketIOConnection;
+        this.httpConnection = constructorProperties.httpConnection;
+        this.autoLoader = constructorProperties.autoLoader;
+        this.viewEngine = constructorProperties.viewEngine;
     };
     this.any = function (routeName, route, filters) {
         this.io(routeName, route, filters);

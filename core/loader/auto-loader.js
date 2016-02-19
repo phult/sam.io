@@ -8,7 +8,7 @@
 module.exports = new AutoLoader();
 /** Imports **/
 var util = require("../app/util");
-var serviceProvider = require("../ioc/service-provider");
+var serviceContainer = require("../ioc-container/service-container");
 /** Modules **/
 function AutoLoader() {
     this.classMap = [];
@@ -52,7 +52,7 @@ function AutoLoader() {
                     var paramValues = [ClassFile];
                     var paramNames = util.getFunctionParamNames(ClassFile);
                     paramNames.forEach(function (paramName) {
-                        paramValues.push(serviceProvider.make(paramName));
+                        paramValues.push(serviceContainer.make(paramName));
                     });
                     // Create instance with constructor params
                     var obj = new (ClassFile.bind.apply(ClassFile, paramValues))();
