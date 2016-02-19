@@ -3,21 +3,21 @@
  * December 27, 2015
  */
 /** Exports **/
-module.exports = new ServiceProvider();
+module.exports = new ServiceContainer();
 /** Imports **/
 var logger = (require(__dir + "/core/log/logger-factory")).getLogger("ServiceProvider");
 /** Modules **/
-function ServiceProvider() {
-    var serviceContainer = {};
+function ServiceContainer() {
+    var containerMap = {};
     this.bind = function (abstract, concrete) {
-        if (serviceContainer[abstract] != null) {
+        if (containerMap[abstract] != null) {
             logger.warning("Binding a duplicated abstract: " + abstract, concrete);
         }
-        serviceContainer[abstract] = concrete;
+        containerMap[abstract] = concrete;
     };
     this.make = function (abstract) {
         var retval = null;
-        var concrete = serviceContainer[abstract];
+        var concrete = containerMap[abstract];
         if (concrete != null) {
             if (typeof concrete == "function") {
                 retval = new concrete();
