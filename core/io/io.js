@@ -8,11 +8,11 @@ module.exports = IO;
 var fs = require("fs");
 /** Modules **/
 var IOBuilder = require('./io-builder');
-function IO(initParams) {
-    this.autoLoader = initParams.autoLoader;
-    this.routeName = initParams.routeName;
-    this.sessionManager = initParams.sessionManager;
-    this.viewEngine = initParams.viewEngine;
+function IO(constructorProperties) {
+    this.autoLoader = constructorProperties.autoLoader;
+    this.routeName = constructorProperties.routeName;
+    this.sessionManager = constructorProperties.sessionManager;
+    this.viewEngine = constructorProperties.viewEngine;
     this.p = {
         type: "http",
         status: 200,
@@ -58,7 +58,7 @@ function IO(initParams) {
      * Return a custom response
      * @param {string} content
      */
-    this.make = function (content) {
+    this.echo = function (content) {
         var self = this;
         this.header("Content-Type", "text/html; charset=UTF-8");
         this.header("Connection", "close");
@@ -115,7 +115,7 @@ function IO(initParams) {
      * @param {String|Function} url
      */
     this.redirect = function (url) {
-        this.status(301).header("Location", url).make("");
+        this.status(301).header("Location", url).echo("");
 
     };
 }
