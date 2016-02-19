@@ -3,7 +3,7 @@ module.exports = function ($route, $logger) {
     /** Register HTTP requests **/
     $route.get("/", function (io) {
         io.render("home",{});
-        //io.make("hello world");
+        //io.echo("hello world");
     });
     $route.get("/home", "HomeController@index");
     $route.any("/login", "User/AuthController@login");

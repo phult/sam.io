@@ -18,7 +18,7 @@ function HomeController($config, $event, $logger) {
             // respond
             io.status(200)
                     .header("Content-Length", responseData.length)
-                    .make(responseData);
+                    .echo(responseData);
         }
         // delegate to login action
         else {
