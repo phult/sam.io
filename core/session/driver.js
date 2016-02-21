@@ -6,6 +6,9 @@
 module.exports = Driver;
 /** Modules **/
 function Driver(config) {
+    this.has = function (sessionId, key) {
+        throw new Error("not implemented");
+    };
     this.get = function (sessionId, key, defaultValue) {
         throw new Error("not implemented");
     };
