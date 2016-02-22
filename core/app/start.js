@@ -2,7 +2,7 @@
 var fs = require("fs");
 var config = require(__dir + "/core/app/config");
 var util = require(__dir + "/core/app/util");
-var sessionManager = require(__dir + "/core/session/session-manager");
+var sessionManager = require(__dir + "/core/io/session/session-manager");
 var httpServer = require(__dir + "/core/net/http-server");
 var autoLoader = require(__dir + "/core/loader/auto-loader");
 var routerLoader = require(__dir + "/core/loader/route-loader");

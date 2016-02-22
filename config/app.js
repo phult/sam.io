@@ -5,5 +5,9 @@ module.exports = {
         "/controllers",
         "/entities",
         "/start"
-    ]
+    ],
+    encryption: {
+        'key': "d6F3Efeq",
+        'cipher': "aes-256-ctr"
+    }
 };

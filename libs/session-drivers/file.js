@@ -3,7 +3,7 @@
  * Jan 11, 2016
  */
 module.exports = File;
-var Driver = require(__dir + "/core/session/driver");
+var Driver = require(__dir + "/core/io/session/driver");
 var fs = require("fs");
 var util = require(__dir + '/core/app/util');
 function File(config) {

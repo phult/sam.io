@@ -7,6 +7,8 @@
 module.exports = new Util();
 /** Imports **/
 var fs = require("fs");
+var crypto = require('crypto');
+var config = require(__dir + "/core/app/config");
 /** Modules **/
 /**
  * Hash a string
@@ -43,6 +45,26 @@ String.prototype.matchWildcard = function (wildcard) {
     wildcard = wildcard.replace(/\?/g, ".");
     var regEx = new RegExp(wildcard, "i");
     return regEx.test(this);
+};
+/**
+ * Encrypt a plain text
+ * @returns {String}
+ */
+String.prototype.encrypt = function () {
+    var cipher = crypto.createCipher(config.get("app.encryption.cipher", "aes-256-ctr"), config.get("app.encryption.key", ""));
+    var crypted = cipher.update(this.toString(), 'utf8', 'hex');
+    crypted += cipher.final('hex');
+    return crypted;
+};
+/**
+ * Decrypt a encrypted string
+ * @returns {String}
+ */
+String.prototype.decrypt = function () {
+    var decipher = crypto.createDecipher(config.get("app.encryption.cipher", "aes-256-ctr"), config.get("app.encryption.key", ""));
+    var dec = decipher.update(this.toString(), 'hex', 'utf8');
+    dec += decipher.final('utf8');
+    return dec;
 };
 function Util() {
     this.now = function () {
