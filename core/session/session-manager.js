@@ -217,6 +217,9 @@ function SessionManager() {
 
     }
     function bindSessionMethods(session) {
+        session.has = function (key) {
+            return driver.has(session.id, key);
+        };
         session.get = function (key, defaultValue) {
             return driver.get(session.id, key, defaultValue);
         };

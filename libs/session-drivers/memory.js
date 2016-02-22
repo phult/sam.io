@@ -7,6 +7,13 @@ var Driver = require(__dir + "/core/io/session/driver");
 function Memory(config) {
     this.config = config;
     var sessionData = [];
+    this.has = function (sessionId, key) {
+        var retval = false;
+        if (sessionData[sessionId] != null && sessionData[sessionId][key] != null) {
+            retval = true;
+        }
+        return retval;
+    };
     this.get = function (sessionId, key, defaultValue) {
         var retval = defaultValue;
         key = key.hash();

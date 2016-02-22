@@ -11,6 +11,9 @@ function File(config) {
     if (!fs.existsSync(sessionStorage)) {
         fs.mkdirSync(sessionStorage, 0777);
     }
+    this.has = function (sessionId, key) {
+        return fs.existsSync(sessionStorage + "/" + sessionId + "/" + key, "utf8");
+    };
     this.get = function (sessionId, key, defaultValue) {
         var retval = defaultValue;
         key = key.hash();
