@@ -6,6 +6,7 @@
 module.exports = IO;
 /** Imports **/
 var fs = require("fs");
+var Cookie = require(__dir + "/core/io/cookie/cookie");
 /** Modules **/
 var IOBuilder = require('./io-builder');
 function IO(constructorProperties) {
@@ -13,6 +14,7 @@ function IO(constructorProperties) {
     this.routeName = constructorProperties.routeName;
     this.sessionManager = constructorProperties.sessionManager;
     this.viewEngine = constructorProperties.viewEngine;
+    this.cookie = new Cookie();
     this.p = {
         type: "http",
         status: 200,
@@ -29,7 +31,11 @@ function IO(constructorProperties) {
         this.request = req;
         this.response = res;
         this.inputs = req.inputs;
-        this.session = req.session;
+        this.session = req.session;        
+        this.cookie.load({
+            request: req,
+            response: res
+        });
     };
     this.bindSocketIO = function (data, session) {
         this.type = "socket.io";
