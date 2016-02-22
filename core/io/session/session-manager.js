@@ -3,7 +3,7 @@
  * Jan 11, 2016
  */
 module.exports = new SessionManager();
-var util = require("../../core/app/util");
+var util = require(__dir + "/core/app/util");
 var Driver = require("./driver");
 var sessions = {};
 var driver = null;
