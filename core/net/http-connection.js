@@ -42,7 +42,7 @@ function HttpConnection() {
             });
             req.on("end", function () {
                 req.inputs = self.getInputs(body);
-                var callback = getCallback.bind(this)("POST", url);
+                var callback = getCallback.bind(self)("POST", url);
                 if (callback != null) {
                     callback(req, res);
                 } else {
