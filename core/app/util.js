@@ -66,6 +66,10 @@ String.prototype.decrypt = function () {
     dec += decipher.final('utf8');
     return dec;
 };
+String.prototype.fileExtension = function () {
+    var fileNameMap = this.toString().split(".");
+    return fileNameMap.length >= 2 ? fileNameMap[fileNameMap.length - 1] : null;
+};
 function Util() {
     this.now = function () {
         var date = new Date();
@@ -182,6 +186,18 @@ function Util() {
                     retval.push(subPath);
                 }
             });
+        }
+        return retval;
+    };
+    /**
+     * Read file content
+     * @param {String} filePath
+     * @returns {String|false}
+     */
+    this.readFile = function (filePath) {
+        var retval = false;
+        if (fs.existsSync(filePath)) {
+            retval = fs.readFileSync(filePath);
         }
         return retval;
     };

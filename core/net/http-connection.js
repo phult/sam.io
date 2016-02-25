@@ -11,6 +11,7 @@ var event = require(__dir + "/core/app/event");
 function HttpConnection() {
     this.postAPIs = [];
     this.getAPIs = [];
+    this.assetAPI = null;
     this.listen = function (httpServer) {
         httpServer.addConnectionListener(this);
     };
@@ -23,7 +24,8 @@ function HttpConnection() {
         if (req.method == "GET") {
             var callback = getCallback.bind(this)("GET", url);
             if (callback != null) {
-                req.inputs = self.getInputs(url);
+                req.inputs = getInputs(url);
+                req.baseUrl = getBaseUrl(url);
                 callback(req, res, url);
             } else {
                 res.writeHead(404, {"Content-Type": "application/json"});
@@ -41,7 +43,8 @@ function HttpConnection() {
                     req.connection.destroy();
             });
             req.on("end", function () {
-                req.inputs = self.getInputs(body);
+                req.inputs = getInputs(body);
+                req.baseUrl = getBaseUrl(url);
                 var callback = getCallback.bind(self)("POST", url);
                 if (callback != null) {
                     callback(req, res);
@@ -55,20 +58,14 @@ function HttpConnection() {
             });
         }
     };
-    this.getInputs = function (url) {
-        var retval = {};
-        url = decodeURIComponent(url);
-        url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-                function (m, key, value) {
-                    retval[key] = value;
-                });
-        return retval;
-    };
     this.get = function (url, callback) {
         this.getAPIs[url] = callback;
     };
     this.post = function (url, callback) {
         this.postAPIs[url] = callback;
+    };
+    this.asset = function (callback) {
+        this.assetAPI = callback;
     };
     /** Utils **/
     function getCallback(type, url) {
@@ -76,9 +73,24 @@ function HttpConnection() {
         if (type.toUpperCase() === "GET") {
             url = url.split("?")[0];
             retval = this.getAPIs[url];
+            if (retval == null) {
+                retval = this.assetAPI;
+            }
         } else if (type.toUpperCase() === "POST") {
             retval = this.postAPIs[url];
         }
         return retval;
+    }
+    function getInputs(url) {
+        var retval = {};
+        url = decodeURIComponent(url);
+        url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+                function (m, key, value) {
+                    retval[key] = value;
+                });
+        return retval;
+    }
+    function getBaseUrl(url) {
+        return url.split("?")[0];
     }
 }
