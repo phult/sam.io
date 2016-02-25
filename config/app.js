@@ -6,6 +6,7 @@ module.exports = {
         "/entities",
         "/start"
     ],
+    assetPath: "/assets",
     encryption: {
         'key': "d6F3Efeq",
         'cipher': "aes-256-ctr"

@@ -7,6 +7,9 @@
 module.exports = new RouteLoader();
 /** Imports **/
 var IO = require("../io/io");
+var util = require(__dir + "/core/app/util");
+var config = require(__dir + "/core/app/config");
+var contentTypes = require(__dir + "/core/io/content-types");
 /** Modules **/
 function RouteLoader() {
     this.filterContainer = [];
@@ -16,6 +19,7 @@ function RouteLoader() {
         this.httpConnection = constructorProperties.httpConnection;
         this.autoLoader = constructorProperties.autoLoader;
         this.viewEngine = constructorProperties.viewEngine;
+        this.httpConnection.asset(processAssetRequest);
     };
     this.any = function (routeName, route, filters) {
         this.io(routeName, route, filters);
@@ -139,6 +143,25 @@ function RouteLoader() {
                     }
                 }
             }
+        }
+    }
+    function processAssetRequest(req, res) {
+        var result = util.readFile(__dir + config.get("app.assetPath", "") + req.baseUrl);
+        if (result === false) {
+            res.writeHead(404, {"Content-Type": "application/json"});
+            res.end(JSON.stringify({
+                status: 404,
+                result: "page not found"
+            }));
+        } else {
+            var header = {"Connection": "close"};
+            var fileExtension = req.baseUrl.fileExtension();
+            var contentType = contentTypes[fileExtension];
+            if (contentType != null) {
+                header["Content-Type"] = contentType;
+            }
+            res.writeHead(200, header);
+            res.end(result, "binary");
         }
     }
 }
