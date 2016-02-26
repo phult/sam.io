@@ -1,16 +1,16 @@
 {
-    "name": "AduFramework",
+    "name": "Quicksort.io",
     "description": "A lightweight node.js framework for http and socket.io server application.",
-    "homepage": "https://github.com/phult",
-    "author": "PhuLuong <phult.contact@gmail.com>",
-    "keywords": ["framework", "http", "socket.io", "mvc", "lightweight", "server"],
+    "homepage": "https://github.com/megaads-vn",
+    "author": "Megaads <info.megaads@gmail.com>",
+    "keywords": ["framework", "http", "socket.io", "mvc", "lightweight", "server", "engine", "real time", "notification", "chat", "rest"],
     "license": "MIT",
-    "version": "0.6.3",
+    "version": "0.7.1",
     "main": "app.js",
     "contributors": [],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/phult/adu.git"
+        "url": "git+https://github.com/megaads-vn/quicksort.io"
     },
     "dependencies": {
         "socket.io": "1.*",

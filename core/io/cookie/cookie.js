@@ -9,7 +9,7 @@ function Cookie(session) {
     var cookieContainer = {};
     var request;
     var response;
-    var COOKIE_PREFIX = "_adu_";
+    var COOKIE_PREFIX = "_qsort_";
     var DELETED_VALUE = "_deleted_";
     var EXPIRED_DAYS = 365 * 100;
     this.load = function (propeties) {
