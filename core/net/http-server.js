@@ -5,6 +5,7 @@
 
 /** Imports **/
 var http = require("http");
+var config = require(__dir + "/core/app/config");
 /** Exports **/
 module.exports = new HttpServer();
 /** Modules **/
@@ -13,6 +14,11 @@ function HttpServer() {
     var listeners = [];
     this.server = http.createServer(function (req, res) {
         req.session = self.sessionManager.initHTTPSession(req, res);
+        if (config.get("app.requestTimeout", -1) != -1) {
+            req.setTimeout(parseInt(config.get("app.requestTimeout")), function () {
+                this.abort();
+            });
+        }
         for (var i = 0; i < listeners.length; i++) {
             listeners[i].onConnection(req, res);
         }
