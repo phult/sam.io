@@ -29,7 +29,9 @@ function Config() {
                     retval = require(path);
                 } else if (fs.existsSync(parentPath + ".js")) {
                     var property = path.substring(path.lastIndexOf("/") + 1, path.length);
-                    retval = (require(parentPath))[property];
+                    if ((require(parentPath))[property] != null) {
+                        retval = (require(parentPath))[property];
+                    }
                 }
                 configContainer[key] = retval;
             } catch (exc) {
