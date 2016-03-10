@@ -24,7 +24,7 @@ function HttpConnection() {
         if (req.method == "GET") {
             var callback = getCallback.bind(this)("GET", url);
             if (callback != null) {
-                req.inputs = getInputs(url);
+                req.inputs = getInputs(url, req);
                 req.baseUrl = getBaseUrl(url);
                 callback(req, res, url);
             } else {
@@ -35,7 +35,7 @@ function HttpConnection() {
                 }));
             }
         } else if (req.method == "POST") {
-            var body = "?";
+            var body = "";
             req.on("data", function (data) {
                 body += data;
                 // Too much POST data, close the connection!
@@ -43,7 +43,7 @@ function HttpConnection() {
                     req.connection.destroy();
             });
             req.on("end", function () {
-                req.inputs = getInputs(body);
+                req.inputs = getInputs(body, req);
                 req.baseUrl = getBaseUrl(url);
                 var callback = getCallback.bind(self)("POST", url);
                 if (callback != null) {
@@ -81,13 +81,20 @@ function HttpConnection() {
         }
         return retval;
     }
-    function getInputs(url) {
+    function getInputs(url, request) {
         var retval = {};
-        url = decodeURIComponent(url);
-        url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-                function (m, key, value) {
-                    retval[key] = value;
-                });
+        if (request.headers["content-type"] != null && request.headers["content-type"].indexOf("application/json") >= 0) {
+            retval = JSON.parse(url);
+        } else {
+            if (request.method == "POST") {
+                url = "?" + url;
+            }
+            url = decodeURIComponent(url);
+            url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+                    function (m, key, value) {
+                        retval[key] = value;
+                    });
+        }
         return retval;
     }
     function getBaseUrl(url) {
