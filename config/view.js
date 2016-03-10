@@ -4,5 +4,7 @@ module.exports = {
     /** View-engine storage path **/
     enginePath: "/libs/view-engines",
     /** View storage path **/
-    view: __dir + "/views"
+    view: __dir + "/views",
+    /** View file extension **/
+    viewExtension: "ejs"
 };
