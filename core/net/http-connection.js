@@ -23,10 +23,11 @@ function HttpConnection() {
         var url = req.url;
         if (req.method == "GET") {
             var callback = getCallback.bind(this)("GET", url);
-            if (callback != null) {
-                req.inputs = getInputs(url, req);
+            if (callback.fn != null) {
+                req.inputs = callback.urlInputs;
+                req.inputs = req.inputs.merge(getInputs(url));                
                 req.baseUrl = getBaseUrl(url);
-                callback(req, res, url);
+                callback.fn(req, res, url);
             } else {
                 res.writeHead(404, {"Content-Type": "application/json"});
                 res.end(JSON.stringify({
@@ -35,7 +36,7 @@ function HttpConnection() {
                 }));
             }
         } else if (req.method == "POST") {
-            var body = "";
+            var body = "?";
             req.on("data", function (data) {
                 body += data;
                 // Too much POST data, close the connection!
@@ -43,11 +44,11 @@ function HttpConnection() {
                     req.connection.destroy();
             });
             req.on("end", function () {
-                req.inputs = getInputs(body, req);
+                req.inputs = getInputs(body);
                 req.baseUrl = getBaseUrl(url);
                 var callback = getCallback.bind(self)("POST", url);
-                if (callback != null) {
-                    callback(req, res);
+                if (callback.fn != null) {
+                    callback.fn(req, res);
                 } else {
                     res.writeHead(404, {"Content-Type": "application/json"});
                     res.end(JSON.stringify({
@@ -69,32 +70,50 @@ function HttpConnection() {
     };
     /** Utils **/
     function getCallback(type, url) {
-        var retval;
+        var retval = {
+            urlInputs: {},
+            url: url,
+            fn: null
+        };
         if (type.toUpperCase() === "GET") {
             url = url.split("?")[0];
-            retval = this.getAPIs[url];
-            if (retval == null) {
-                retval = this.assetAPI;
+            retval.fn = this.getAPIs[url];
+            // Match url with params
+            if (retval.fn == null) {
+                var routeParams = [];
+                var urlRegex = null;
+                var urlMatches = null;
+                for (var route in this.getAPIs) {
+                    routeParams = route.match(/({[a-zA-Z0-9]+})/g);
+                    if (routeParams.length > 0) {
+                        urlRegex = new RegExp(route.replace(/({[a-z]+})/g, "([^\/]+)"), "g");
+                        urlMatches = url.match(urlRegex);
+                        if (urlMatches != null && urlMatches.length == 1) {
+                            for (var i = 0; i < routeParams.length; i++) {
+                                retval.urlInputs[routeParams[i].replace(/([{}]+)/g, "")] = url.replace(urlRegex, "$" + (i + 1));
+                            }
+                            retval.fn = this.getAPIs[route];
+                            break;
+                        }
+                    }
+                }
+            }
+            // Match asset url
+            if (retval.fn == null && retval.urlInputs.length == 0) {
+                retval.fn = this.assetAPI;
             }
         } else if (type.toUpperCase() === "POST") {
-            retval = this.postAPIs[url];
+            retval.fn = this.postAPIs[url];
         }
         return retval;
     }
-    function getInputs(url, request) {
+    function getInputs(url) {
         var retval = {};
-        if (request.headers["content-type"] != null && request.headers["content-type"].indexOf("application/json") >= 0) {
-            retval = JSON.parse(url);
-        } else {
-            if (request.method == "POST") {
-                url = "?" + url;
-            }
-            url = decodeURIComponent(url);
-            url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-                    function (m, key, value) {
-                        retval[key] = value;
-                    });
-        }
+        url = decodeURIComponent(url);
+        url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+                function (m, key, value) {
+                    retval[key] = value;
+                });
         return retval;
     }
     function getBaseUrl(url) {
