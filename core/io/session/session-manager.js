@@ -8,7 +8,7 @@ var Driver = require("./driver");
 var sessions = {};
 var driver = null;
 function SessionManager() {
-    this.SESSION_ID_KEY = "adu_session_id";
+    this.SESSION_ID_KEY = "_qsort_session_id";
     this.timeout = -1;
     this.interval = 60000;
     this.start = function (config) {

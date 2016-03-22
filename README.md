@@ -1,7 +1,7 @@
 # Introduction
-`Adu` is a `node.js` framework for `http` and `socket.io` server application. It's simple, lightweight and familiar!
+`Quicksort.io` is a `node.js` framework for `http` and `socket.io` server application. It's simple, lightweight and familiar!
 
-`Adu framework` supports both experienced programmers and newbies to develop `node.js` application in a structured way and easy to maintain.
+`Quicksort.io framework` supports both experienced programmers and newbies to develop `node.js` application in a structured way and easy to maintain.
 
 It's used to build real-time applications, user activity tracking systems, chat applications and it's good for any web application project.
 
@@ -33,11 +33,11 @@ and send a http request, then it should print out: "hello world"
     curl http://localhost:2307/
 
 # Installation
-Adu framework is easy to install:
+`Quicksort.io` framework is easy to install:
 
-1. Cloning the project: `$ git clone https://github.com/phult/adu.git`
+1. Cloning the project: `$ git clone https://github.com/megaads-vn/quicksort.io`
 
-2. Changing current directory to project directory: `$ cd adu.git`
+2. Changing current directory to project directory: `$ cd quicksort.io`
 
 3. Installing dependencies: `$ npm install`
 
