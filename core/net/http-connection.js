@@ -21,11 +21,12 @@ function HttpConnection() {
         // Pass to listeners
         var self = this;
         var url = req.url;
-        if (req.method == "GET") {
+        if (req.method === "GET") {
+            var contentType = req.headers["content-type"];
             var callback = getCallback.bind(this)("GET", url);
             if (callback.fn != null) {
                 req.inputs = callback.urlInputs;
-                req.inputs = req.inputs.merge(getInputs(url));                
+                req.inputs = req.inputs.merge(getInputs(url, "GET", contentType));
                 req.baseUrl = getBaseUrl(url);
                 callback.fn(req, res, url);
             } else {
@@ -35,8 +36,9 @@ function HttpConnection() {
                     result: "page not found"
                 }));
             }
-        } else if (req.method == "POST") {
-            var body = "?";
+        } else if (req.method === "POST") {
+            var body = "";
+            var contentType = req.headers["content-type"];
             req.on("data", function (data) {
                 body += data;
                 // Too much POST data, close the connection!
@@ -44,7 +46,7 @@ function HttpConnection() {
                     req.connection.destroy();
             });
             req.on("end", function () {
-                req.inputs = getInputs(body);
+                req.inputs = getInputs(body, "POST", contentType);
                 req.baseUrl = getBaseUrl(url);
                 var callback = getCallback.bind(self)("POST", url);
                 if (callback.fn != null) {
@@ -85,10 +87,10 @@ function HttpConnection() {
                 var urlMatches = null;
                 for (var route in this.getAPIs) {
                     routeParams = route.match(/({[a-zA-Z0-9]+})/g);
-                    if (routeParams.length > 0) {
+                    if (routeParams != null && routeParams.length > 0) {
                         urlRegex = new RegExp(route.replace(/({[a-z]+})/g, "([^\/]+)"), "g");
                         urlMatches = url.match(urlRegex);
-                        if (urlMatches != null && urlMatches.length == 1) {
+                        if (urlMatches != null && urlMatches.length === 1) {
                             for (var i = 0; i < routeParams.length; i++) {
                                 retval.urlInputs[routeParams[i].replace(/([{}]+)/g, "")] = url.replace(urlRegex, "$" + (i + 1));
                             }
@@ -99,7 +101,7 @@ function HttpConnection() {
                 }
             }
             // Match asset url
-            if (retval.fn == null && retval.urlInputs.length == 0) {
+            if (retval.fn == null && retval.urlInputs.length === 0) {
                 retval.fn = this.assetAPI;
             }
         } else if (type.toUpperCase() === "POST") {
@@ -107,13 +109,20 @@ function HttpConnection() {
         }
         return retval;
     }
-    function getInputs(url) {
+    function getInputs(inputString, type, contentType) {
         var retval = {};
-        url = decodeURIComponent(url);
-        url.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-                function (m, key, value) {
-                    retval[key] = value;
-                });
+        if (contentType === "application/json") {
+            retval = JSON.parse(inputString);
+        } else {
+            if (type === "POST") {
+                inputString = "?" + inputString;
+            }
+            inputString = decodeURIComponent(inputString);
+            inputString.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+                    function (m, key, value) {
+                        retval[key] = value;
+                    });
+        }
         return retval;
     }
     function getBaseUrl(url) {
