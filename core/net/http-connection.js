@@ -26,7 +26,10 @@ function HttpConnection() {
             var callback = getCallback.bind(this)("GET", url);
             if (callback.fn != null) {
                 req.inputs = callback.urlInputs;
-                req.inputs = req.inputs.merge(getInputs(url, "GET", contentType));
+                var inputs = getInputs(url, "GET", contentType);
+                for (var property in inputs) {
+                    req.inputs[property] = inputs[property];
+                }
                 req.baseUrl = getBaseUrl(url);
                 callback.fn(req, res, url);
             } else {

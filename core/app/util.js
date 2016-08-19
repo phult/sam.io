@@ -70,14 +70,6 @@ String.prototype.fileExtension = function () {
     var fileNameMap = this.toString().split(".");
     return fileNameMap.length >= 2 ? fileNameMap[fileNameMap.length - 1] : null;
 };
-Object.prototype.merge = function (mergedObject) {
-    var retval = this;
-    for (var property in mergedObject) {
-        retval[property] = mergedObject[property];
-    }
-    delete retval.merge;
-    return retval;
-};
 function Util() {
     this.now = function () {
         var date = new Date();
