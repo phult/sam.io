@@ -66,6 +66,7 @@ function IOBuilder() {
     }
     function buildReceiver() {
         var self = this;
+        this.p.tos = [];
         // build emit event
         this.p.toEvent = (this.p.toEvent === null ? this.routeName : this.p.toEvent);
         // build received io sessions
