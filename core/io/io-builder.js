@@ -26,6 +26,7 @@ function IOBuilder() {
         return this;
     };
     this.to = function (session) {
+        this.p.isToAll = false;
         if (session != null) {
             this.p.tos.push(session);
             this.p.tos = util.arrayUnique(this.p.tos);
@@ -37,16 +38,19 @@ function IOBuilder() {
         return this;
     };
     this.toExpection = function (session) {
+        this.p.isToAll = false;
         if (session != null) {
             this.p.toExpections.push(session);
         }
         return this;
     };
     this.toCriteria = function (property, value) {
+        this.p.isToAll = false;
         this.p.toCriterias[property] = value;
         return this;
     };
     this.toExpectionCriteria = function (property, value) {
+        this.p.isToAll = false;
         this.p.toExpectionCriterias[property] = value;
         return this;
     };
@@ -61,6 +65,7 @@ function IOBuilder() {
         }
     }
     function buildReceiver() {
+        var self = this;
         // build emit event
         this.p.toEvent = (this.p.toEvent === null ? this.routeName : this.p.toEvent);
         // build received io sessions
@@ -73,8 +78,8 @@ function IOBuilder() {
             }
             for (var property in this.p.toCriterias) {
                 socketIOSessions.forEach(function (session) {
-                    if (session[property] == this.p.toCriterias[property]) {
-                        this.p.tos.push(session);
+                    if (session[property] == self.p.toCriterias[property]) {
+                        self.p.tos.push(session);
                     }
                 });
             }
