@@ -41,9 +41,11 @@ function SocketIOConnection() {
         session.socket.emit(type, message);
     };
     this.broadcastMessage = function (type, message) {
-        var users = this.sessionManager.getSocketIOSessions();
+        var users = this.sessionManager.getSessions("socket.io");
         for (var i = 0; i < users.length; i++) {
-            users[i].socket.emit(type, message);
+            if (users[i].socket != null) {
+                users[i].socket.emit(type, message);
+            }
         }
     };
     this.listen = function (httpServer, sessionManager) {
