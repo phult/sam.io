@@ -66,6 +66,17 @@ String.prototype.decrypt = function () {
     dec += decipher.final('utf8');
     return dec;
 };
+/**
+ * Hash a string
+ * @returns {String}
+ */
+String.prototype.hashHex = function () {
+    return crypto.createHmac('sha256', config.get("app.encryption.key", "")).update(this.toString()).digest('hex');
+}
+/**
+ * Get file extension
+ * @returns {String}
+ */
 String.prototype.fileExtension = function () {
     var fileNameMap = this.toString().split(".");
     return fileNameMap.length >= 2 ? fileNameMap[fileNameMap.length - 1] : null;
@@ -120,7 +131,7 @@ function Util() {
     };
     /**
      * Delete directory and files
-     * @param {String} path     
+     * @param {String} path
      */
     this.deleteDirectory = function (path) {
         var self = this;
