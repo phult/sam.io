@@ -9,6 +9,7 @@ module.exports = new Util();
 var fs = require("fs");
 var crypto = require('crypto');
 var config = require(__dir + "/core/app/config");
+var os = require('os');
 /** Modules **/
 /**
  * Hash a string
@@ -209,6 +210,24 @@ function Util() {
         var retval = false;
         if (fs.existsSync(filePath)) {
             retval = fs.readFileSync(filePath);
+        }
+        return retval;
+    };
+    /**
+     * Get local IP
+     * @returns {String}
+     */
+    this.getLocalIP = function() {
+        var retval = "127.0.0.1";
+        var interfaces = os.networkInterfaces();
+        for (var k in interfaces) {
+            for (var k2 in interfaces[k]) {
+                var address = interfaces[k][k2];
+                if (address.family === 'IPv4' && !address.internal) {
+                    retval = address.address;
+                    break;
+                }
+            }
         }
         return retval;
     };

@@ -67,6 +67,7 @@ function Application() {
     function displayConfiguration() {
         logger.info("Start time:  " + util.now());
         logger.info("Port:        " + config.get("app.port"));
+        logger.info("Local IP:    " + util.getLocalIP());
         logger.info("Debug mode:  " + config.get("app.debug"));
     }
 }
