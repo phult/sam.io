@@ -31,6 +31,7 @@ function RouteLoader() {
         var self = this;
         this.socketIOConnection.addMessageListener(routeName, function (data, session) {
             var io = new IO({
+                method: "io",
                 autoLoader: self.autoLoader,
                 routeName: routeName,
                 sessionManager: self.sessionManager,
@@ -45,6 +46,7 @@ function RouteLoader() {
         var self = this;
         this.httpConnection.get(routeName, function (req, res) {
             var io = new IO({
+                method: "get",
                 autoLoader: self.autoLoader,
                 routeName: routeName,
                 sessionManager: self.sessionManager,
@@ -59,6 +61,7 @@ function RouteLoader() {
         var self = this;
         this.httpConnection.post(routeName, function (req, res) {
             var io = new IO({
+                method: "post",
                 autoLoader: self.autoLoader,
                 routeName: routeName,
                 sessionManager: self.sessionManager,
