@@ -122,7 +122,7 @@ function IO(constructorProperties) {
      * @param {String|Function} url
      */
     this.redirect = function (url) {
-        this.status(301).header("Location", url).echo("");
+        this.status(302).header("Location", url).echo("");
 
     };
 }
