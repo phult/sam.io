@@ -69,9 +69,11 @@ function SocketIOConnection() {
         var self = this;
         for (var namespace in self.messageListeners) {
             if (self.messageListeners[namespace] != null) {
-                socket.on(namespace, function (data) {
-                    self.messageListeners[namespace](data, session);
-                });
+                (function(e) {
+                     socket.on(e, function(data) {
+                        self.messageListeners[e](data, session);
+                     });
+                })(namespace);
             }
         }
     }
