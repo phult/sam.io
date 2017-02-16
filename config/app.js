@@ -11,5 +11,13 @@ module.exports = {
     encryption: {
         'key': "d6F3Efeq",
         'cipher': "aes-256-ctr"
+    },
+    sslMode: {
+        enable: false,
+        port: 2308,
+        options: {
+            key: "/path/file.key",
+            cert: "/path/file.crt"
+        }
     }
 };

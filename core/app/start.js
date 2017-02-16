@@ -68,6 +68,11 @@ function Application() {
         logger.info("Start time:  " + util.now());
         logger.info("Port:        " + config.get("app.port"));
         logger.info("Local IP:    " + util.getLocalIP());
+        var sslMode = config.get("app.sslMode");
+        logger.info("SSL mode:    " + sslMode.enable);
+        if (sslMode.enable) {
+            logger.info("SSL port:    " + sslMode.port);
+        }
         logger.info("Debug mode:  " + config.get("app.debug"));
     }
 }

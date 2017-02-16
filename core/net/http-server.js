@@ -5,6 +5,8 @@
 
 /** Imports **/
 var http = require("http");
+var https = require("https");
+var fs = require("fs");
 var config = require(__dir + "/core/app/config");
 /** Exports **/
 module.exports = new HttpServer();
@@ -12,17 +14,18 @@ module.exports = new HttpServer();
 function HttpServer() {
     var self = this;
     var listeners = [];
+    var sslMode = config.get("app.sslMode");
     this.server = http.createServer(function (req, res) {
-        req.session = self.sessionManager.initHTTPSession(req, res);
-        if (config.get("app.requestTimeout", -1) != -1) {
-            req.setTimeout(parseInt(config.get("app.requestTimeout")), function () {
-                this.abort();
-            });
-        }
-        for (var i = 0; i < listeners.length; i++) {
-            listeners[i].onConnection(req, res);
-        }
+        onRequest(this, req, res);
     });
+    if (sslMode.enable) {
+        this.sslServer = https.createServer({
+            key: fs.readFileSync(sslMode.options.key),
+            cert: fs.readFileSync(sslMode.options.cert)
+        }, function (req, res) {
+            onRequest(this, req, res);
+        });
+    }
     /**
      * Start listening connections
      * @param {int} port
@@ -30,9 +33,15 @@ function HttpServer() {
     this.listen = function (port, sessionManager) {
         this.sessionManager = sessionManager;
         this.server.listen(port);
+        if (sslMode.enable) {
+            this.sslServer.listen(sslMode.port);
+        }
     };
     this.getServer = function () {
         return this.server;
+    };
+    this.getSslServer = function () {
+        return this.sslServer;
     };
     /**
      * Add a connection listener
@@ -55,7 +64,7 @@ function HttpServer() {
         return retval;
     };
     /**
-     * Remove a connection listener 
+     * Remove a connection listener
      * @param {Object} listener Object contain onConnection(req, res);
      * @returns {Boolean}
      */
@@ -74,4 +83,15 @@ function HttpServer() {
         }
         return retval;
     };
+    function onRequest(server, req, res) {
+        req.session = self.sessionManager.initHTTPSession(req, res);
+        if (config.get("app.requestTimeout", -1) != -1) {
+            req.setTimeout(parseInt(config.get("app.requestTimeout")), function () {
+                server.abort();
+            });
+        }
+        for (var i = 0; i < listeners.length; i++) {
+            listeners[i].onConnection(req, res);
+        }
+    }
 }
