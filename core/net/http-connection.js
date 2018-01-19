@@ -9,9 +9,12 @@ module.exports = new HttpConnection();
 var event = require(__dir + "/core/app/event");
 /** Classes **/
 function HttpConnection() {
-    this.postAPIs = [];
-    this.getAPIs = [];
+    this.methods = ["get", "post", "put", "delete"];
+    this.requestCallbacks = [];
     this.assetAPI = null;
+    this.init = function() {
+        this.initRequestCallbacks();
+    }
     this.listen = function (httpServer) {
         httpServer.addConnectionListener(this);
     };
@@ -39,7 +42,7 @@ function HttpConnection() {
                     result: "page not found"
                 }));
             }
-        } else if (req.method === "POST") {
+        } else {
             var body = "";
             var contentType = req.headers["content-type"];
             req.on("data", function (data) {
@@ -49,9 +52,9 @@ function HttpConnection() {
                     req.connection.destroy();
             });
             req.on("end", function () {
-                req.inputs = getInputs(body, "POST", contentType);
+                req.inputs = getInputs(body, req.method, contentType);
                 req.baseUrl = getBaseUrl(url);
-                var callback = getCallback.bind(self)("POST", url);
+                var callback = getCallback.bind(self)(req.method, url);
                 if (callback.fn != null) {
                     callback.fn(req, res);
                 } else {
@@ -64,31 +67,48 @@ function HttpConnection() {
             });
         }
     };
-    this.get = function (url, callback) {
-        this.getAPIs[url] = callback;
-    };
-    this.post = function (url, callback) {
-        this.postAPIs[url] = callback;
+    this.initRequestCallbacks = function() {
+        var self = this;
+        for (var i = 0; i < self.methods.length; i++) {
+            var method = self.methods[i];
+            self[method] = function(method) {
+                return function (url, callback) {
+                    self.addRequestCallback(method, url, callback);
+                };
+            }(method);
+        }
     };
     this.asset = function (callback) {
         this.assetAPI = callback;
     };
     /** Utils **/
-    function getCallback(type, url) {
+    this.addRequestCallback = function (method, url, callbackFn) {
+        method = method.toUpperCase();
+        var methodCallbacks = null;
+        if (this.requestCallbacks[method] == null) {
+            methodCallbacks = [];
+        } else {
+            methodCallbacks = this.requestCallbacks[method];
+        }
+        methodCallbacks[url] = callbackFn;
+        this.requestCallbacks[method] = methodCallbacks;
+    }
+    function getCallback(method, url) {
         var retval = {
             urlInputs: [],
             url: url,
             fn: null
         };
-        if (type.toUpperCase() === "GET") {
+        method = method.toUpperCase();
+        if (method === "GET") {
             url = url.split("?")[0];
-            retval.fn = this.getAPIs[url];
+            retval.fn = this.requestCallbacks[method][url];
             // Match url with params
             if (retval.fn == null) {
                 var routeParams = [];
                 var urlRegex = null;
                 var urlMatches = null;
-                for (var route in this.getAPIs) {
+                for (var route in this.requestCallbacks[method]) {
                     routeParams = route.match(/({[a-zA-Z0-9]+})/g);
                     if (routeParams != null && routeParams.length > 0) {
                         urlRegex = new RegExp(route.replace(/({[a-z]+})/g, "([^\/]+)"), "g");
@@ -97,7 +117,7 @@ function HttpConnection() {
                             for (var i = 0; i < routeParams.length; i++) {
                                 retval.urlInputs[routeParams[i].replace(/([{}]+)/g, "")] = url.replace(urlRegex, "$" + (i + 1));
                             }
-                            retval.fn = this.getAPIs[route];
+                            retval.fn = this.requestCallbacks[method][route];
                             break;
                         }
                     }
@@ -107,17 +127,17 @@ function HttpConnection() {
             if (retval.fn == null && retval.urlInputs.length === 0) {
                 retval.fn = this.assetAPI;
             }
-        } else if (type.toUpperCase() === "POST") {
-            retval.fn = this.postAPIs[url];
+        } else {
+            retval.fn = this.requestCallbacks[method][url];
         }
         return retval;
     }
-    function getInputs(inputString, type, contentType) {
+    function getInputs(inputString, method, contentType) {
         var retval = {};
         if (contentType != null && contentType.indexOf("json") > 0) {
             retval = JSON.parse(inputString);
         } else {
-            if (type === "POST") {
+            if (method !== "GET") {
                 inputString = "?" + inputString;
             }
             inputString = decodeURIComponent(inputString);
@@ -131,4 +151,5 @@ function HttpConnection() {
     function getBaseUrl(url) {
         return url.split("?")[0];
     }
+    this.init();
 }

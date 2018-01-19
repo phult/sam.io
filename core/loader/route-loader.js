@@ -20,11 +20,13 @@ function RouteLoader() {
         this.autoLoader = constructorProperties.autoLoader;
         this.viewEngine = constructorProperties.viewEngine;
         this.httpConnection.asset(processAssetRequest);
+        this.initHTTPRoutes();
     };
     this.any = function (routeName, route, filters) {
         this.io(routeName, route, filters);
-        this.get(routeName, route, filters);
-        this.post(routeName, route, filters);
+        for (var i = 0; i < this.httpConnection.methods.length; i++) {
+            this[this.httpConnection.methods[i]](routeName, route, filters);
+        }
         return this;
     };
     this.io = function (routeName, action, filters) {
@@ -42,36 +44,28 @@ function RouteLoader() {
         });
         return this;
     };
-    this.get = function (routeName, action, filters) {
+    this.initHTTPRoutes = function () {
         var self = this;
-        this.httpConnection.get(routeName, function (req, res) {
-            var io = new IO({
-                method: "get",
-                autoLoader: self.autoLoader,
-                routeName: routeName,
-                sessionManager: self.sessionManager,
-                viewEngine: self.viewEngine
-            });
-            io.bindHttp(req, res);
-            executeAction(self, action, io, filters);
-        });
-        return this;
-    };
-    this.post = function (routeName, action, filters) {
-        var self = this;
-        this.httpConnection.post(routeName, function (req, res) {
-            var io = new IO({
-                method: "post",
-                autoLoader: self.autoLoader,
-                routeName: routeName,
-                sessionManager: self.sessionManager,
-                viewEngine: self.viewEngine
-            });
-            io.bindHttp(req, res);
-            executeAction(self, action, io, filters);
-        });
-        return this;
-    };
+        for (var i = 0; i < this.httpConnection.methods.length; i++) {
+            var method = this.httpConnection.methods[i];
+            this[method] = function (self, method) {
+                return function (routeName, action, filters) {
+                    self.httpConnection[method](routeName, function (req, res) {
+                        var io = new IO({
+                            method: method,
+                            autoLoader: self.autoLoader,
+                            routeName: routeName,
+                            sessionManager: self.sessionManager,
+                            viewEngine: self.viewEngine
+                        });
+                        io.bindHttp(req, res);
+                        executeAction(self, action, io, filters);
+                    });
+                    return self;
+                };
+            }(this, method);
+        }
+    }
     /**
      * Register a filter to the route
      * @param {String} name
