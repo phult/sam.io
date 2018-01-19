@@ -7,6 +7,7 @@
 module.exports = new HttpConnection();
 /** Imports **/
 var event = require(__dir + "/core/app/event");
+var UrlPattern = require("url-pattern");
 /** Classes **/
 function HttpConnection() {
     this.methods = ["get", "post", "put", "delete"];
@@ -52,10 +53,14 @@ function HttpConnection() {
                     req.connection.destroy();
             });
             req.on("end", function () {
-                req.inputs = getInputs(body, req.method, contentType);
-                req.baseUrl = getBaseUrl(url);
                 var callback = getCallback.bind(self)(req.method, url);
                 if (callback.fn != null) {
+                    req.inputs = callback.urlInputs;
+                    var inputs = getInputs(body, req.method, contentType);
+                    for (var property in inputs) {
+                        req.inputs[property] = inputs[property];
+                    }
+                    req.baseUrl = getBaseUrl(url);
                     callback.fn(req, res);
                 } else {
                     res.writeHead(404, {"Content-Type": "application/json"});
@@ -105,23 +110,7 @@ function HttpConnection() {
             retval.fn = this.requestCallbacks[method][url];
             // Match url with params
             if (retval.fn == null) {
-                var routeParams = [];
-                var urlRegex = null;
-                var urlMatches = null;
-                for (var route in this.requestCallbacks[method]) {
-                    routeParams = route.match(/({[a-zA-Z0-9]+})/g);
-                    if (routeParams != null && routeParams.length > 0) {
-                        urlRegex = new RegExp(route.replace(/({[a-z]+})/g, "([^\/]+)"), "g");
-                        urlMatches = url.match(urlRegex);
-                        if (urlMatches != null && urlMatches.length === 1) {
-                            for (var i = 0; i < routeParams.length; i++) {
-                                retval.urlInputs[routeParams[i].replace(/([{}]+)/g, "")] = url.replace(urlRegex, "$" + (i + 1));
-                            }
-                            retval.fn = this.requestCallbacks[method][route];
-                            break;
-                        }
-                    }
-                }
+                getCallbackWithRoutePattern(retval, url, this.requestCallbacks[method]);
             }
             // Match asset url
             if (retval.fn == null && retval.urlInputs.length === 0) {
@@ -129,6 +118,22 @@ function HttpConnection() {
             }
         } else {
             retval.fn = this.requestCallbacks[method][url];
+            // Match url with params
+            if (retval.fn == null) {
+                getCallbackWithRoutePattern(retval, url, this.requestCallbacks[method]);
+            }
+        }
+        return retval;
+    }
+    function getCallbackWithRoutePattern(retval, url, methodCallbacks) {
+        for (var route in methodCallbacks) {
+            var pattern = new UrlPattern(route);
+            var matching = pattern.match(url);
+            if (matching != null) {
+                retval.urlInputs = matching;
+                retval.fn = methodCallbacks[route];
+                break;
+            }
         }
         return retval;
     }

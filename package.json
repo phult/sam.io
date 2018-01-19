@@ -16,6 +16,7 @@
         "socket.io": "1.*",
         "ejs": "2.*",
         "lru-cache": "*",
-        "crypto": "*"
+        "crypto": "*",
+        "url-pattern": "1.*"
     }
 }
