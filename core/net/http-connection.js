@@ -105,8 +105,8 @@ function HttpConnection() {
             fn: null
         };
         method = method.toUpperCase();
+        url = url.split("?")[0];
         if (method === "GET") {
-            url = url.split("?")[0];
             retval.fn = this.requestCallbacks[method][url];
             // Match url with params
             if (retval.fn == null) {
