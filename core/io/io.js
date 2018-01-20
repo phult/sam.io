@@ -10,11 +10,6 @@ var Cookie = require(__dir + "/core/io/cookie/cookie");
 /** Modules **/
 var IOBuilder = require('./io-builder');
 function IO(constructorProperties) {
-    this.autoLoader = constructorProperties.autoLoader;
-    this.routeName = constructorProperties.routeName;
-    this.sessionManager = constructorProperties.sessionManager;
-    this.viewEngine = constructorProperties.viewEngine;
-    this.method = constructorProperties.method;
     this.cookie = new Cookie();
     this.p = {
         type: "http",
@@ -27,6 +22,11 @@ function IO(constructorProperties) {
         toCriterias: [],
         toExpectionCriterias: []
     };
+    this.init = function() {
+        for (var property in constructorProperties) {
+            this[property] = constructorProperties[property];
+        }
+    }
     this.bindHttp = function (req, res) {
         this.type = "http";
         this.request = req;
@@ -125,5 +125,6 @@ function IO(constructorProperties) {
         this.status(302).header("Location", url).echo("");
 
     };
+    this.init();
 }
 IO.prototype = new IOBuilder();
