@@ -145,11 +145,14 @@ function HttpConnection() {
             if (method !== "GET") {
                 inputString = "?" + inputString;
             }
-            inputString = decodeURIComponent(inputString);
-            inputString.replace(/[?&]+([^=&]+)=([^&]*)/gi,
-                    function (m, key, value) {
-                        retval[key] = value;
-                    });
+            try {
+                inputString = decodeURIComponent(inputString);
+                inputString.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+                     function (m, key, value) {
+                         retval[key] = value;
+                     }
+                 );
+            } catch(exc) {}
         }
         return retval;
     }
