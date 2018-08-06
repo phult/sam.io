@@ -23,9 +23,12 @@ function Application() {
     var viewEngine = viewEngineFactory.getEngine(config.get("view"));
     this.start = function () {
         handleExceptions();
+        logger.info("===========================================================");
         displayAppInfo();
         boot();
         displayConfiguration();
+        logger.info("===========================================================");
+
     };
     function boot() {
         // Start client session manager
@@ -58,16 +61,14 @@ function Application() {
         });
     }
     function displayAppInfo() {
-        logger.info("===========================================================");
-        logger.info("");
-        logger.info("  /|| ||\\ | ||  " + packageCfg.name + " - version " + packageCfg.version);
-        logger.info(" /_|| ||_| \\||  " + packageCfg.homepage);
+        logger.info(packageCfg.name + " v" + packageCfg.version);
+        logger.info(packageCfg.homepage);
         logger.info("");
     }
     function displayConfiguration() {
         logger.info("Start time:  " + util.now());
-        logger.info("Port:        " + config.get("app.port"));
         logger.info("Local IP:    " + util.getLocalIP());
+        logger.info("Port:        " + config.get("app.port"));
         var sslMode = config.get("app.sslMode");
         logger.info("SSL mode:    " + sslMode.enable);
         if (sslMode.enable) {

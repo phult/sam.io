@@ -1,19 +1,31 @@
 {
-    "name": "Quicksort.io",
-    "description": "A lightweight node.js framework for http and socket.io server application.",
-    "homepage": "https://github.com/megaads-vn",
-    "author": "Megaads <info.megaads@gmail.com>",
-    "keywords": ["framework", "http", "socket.io", "mvc", "lightweight", "server", "engine", "real time", "notification", "chat", "rest"],
+    "name": "sam.io",
+    "description": "A lightweight and powerful node.js framework to build http and socket.io server application.",
+    "homepage": "https://github.com/phult/sam.io",
+    "author": "PhuLuong <phult.contact@gmail.com>",
+    "keywords": [
+        "framework",
+        "http",
+        "socket.io",
+        "mvc",
+        "lightweight",
+        "server",
+        "engine",
+        "real time",
+        "notification",
+        "chat",
+        "rest"
+    ],
     "license": "MIT",
-    "version": "0.7.1",
+    "version": "0.9.1",
     "main": "app.js",
     "contributors": [],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/megaads-vn/quicksort.io"
+        "url": "git+https://github.com/phult/sam.io"
     },
     "dependencies": {
-        "socket.io": "1.*",
+        "socket.io": "2.*",
         "ejs": "2.*",
         "lru-cache": "*",
         "crypto": "*",
