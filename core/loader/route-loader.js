@@ -22,6 +22,26 @@ function RouteLoader() {
         this.httpConnection.asset(processAssetRequest);
         this.initHTTPRoutes();
     };
+
+    /**
+     * Grouped routes
+     * @param {callable} routes
+     * @param {} filters
+     * @returns {RouteLoader}
+     */
+    this.group = function (routes, filters) {
+        this.groupFilters = filters;
+        routes.bind(this)();
+        return this;
+    };
+    
+    /**
+    * Register a multi method route
+    * @param {String} routeName
+    * @param {callable | String} action
+    * @param {} filters
+    * @returns {RouteLoader}
+    */
     this.any = function (routeName, route, filters) {
         this.io(routeName, route, filters);
         for (var i = 0; i < this.httpConnection.methods.length; i++) {
@@ -29,6 +49,14 @@ function RouteLoader() {
         }
         return this;
     };
+
+    /**
+    * Register a socket.io route
+    * @param {String} routeName
+    * @param {callable | String} action
+    * @param {} filters
+    * @returns {RouteLoader}
+    */
     this.io = function (routeName, action, filters) {
         var self = this;
         this.socketIOConnection.addMessageListener(routeName, function (data, session) {
@@ -44,12 +72,23 @@ function RouteLoader() {
         });
         return this;
     };
+    
+    /**
+    * Initialize HTTP route registers
+    * @param {String} routeName
+    * @param {callable | String} action
+    * @param {} filters
+    * @returns {RouteLoader}
+    */
     this.initHTTPRoutes = function () {
         var self = this;
         for (var i = 0; i < this.httpConnection.methods.length; i++) {
             var method = this.httpConnection.methods[i];
             this[method] = function (self, method) {
                 return function (routeName, action, filters) {
+                    if (filters == null && self.groupFilters != null) {
+                        filters = self.groupFilters;
+                    }
                     self.httpConnection[method](routeName, function (req, res) {
                         var io = new IO({
                             method: method,
