@@ -72,20 +72,11 @@ function SessionManager() {
         return retval;
     };
     this.initSocketIOSession = function (socket) {
-        var retval = {
-            type: "socket.io"
-        };
-        var userId = socket.handshake.query.userId;
-        retval.id = socket.id;
-        retval.userId = userId;
+        var retval = socket.handshake.query;
+        retval.type = "socket.io";
         retval.socket = socket;
+        retval.id = socket.id;
         retval.lastActive = Date.now();
-        if (socket.handshake.query.extra != null) {
-            var params = socket.handshake.query.extra.split(",");
-            params.forEach(function (param) {
-                retval[param] = socket.handshake.query[param];
-            });
-        }
         bindSessionMethods(retval);
         retval.set("_type_", retval.type);
         retval.set("_lastActive_", retval.lastActive);
