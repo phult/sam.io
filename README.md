@@ -22,7 +22,7 @@ To get started, let's create a Controller to handler requests by creating new `h
 Routing requests to the above controller. Open `/start/routes.js` file and add the following route:
 
     route.get("/", "HomeController@helloworld");
-    
+
 or without a controller:
 
     route.get("/", function(io) {
@@ -102,7 +102,16 @@ Unit test classes should be stored in this directory.
 # Controllers
 # Inputs and Responses
 # Session
-#IoC
-#Services
+# IoC
+# Services
 # Events
 # Logger
+
+# License
+
+The Apify is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+# Contact us/ Instant feedback
+
+Email: phult.contact@gmail.com
+
+Skype: [phult.bk](skype:phult.bk?chat)
