@@ -25,17 +25,22 @@ function Config() {
             var path = __dir + "/config/" + key;
             var parentPath = path.substring(0, path.lastIndexOf("/"));
             try {
+                var property = path.substring(path.lastIndexOf("/") + 1, path.length);
                 if (fs.existsSync(path + ".js")) {
                     retval = require(path);
-                } else if (fs.existsSync(parentPath + ".js")) {
-                    var property = path.substring(path.lastIndexOf("/") + 1, path.length);
+                } else if (fs.existsSync(parentPath + ".js")) {                    
                     if ((require(parentPath))[property] != null) {
                         retval = (require(parentPath))[property];
                     }
+                } else if (key.indexOf("package") == 0) {
+                    retval = (require(__dir + "/package.json"))[property];
                 }
                 configContainer[key] = retval;
             } catch (exc) {
             }
+        }
+        if (retval == null) {
+            
         }
         return retval;
     };
