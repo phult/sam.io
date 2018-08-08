@@ -1,7 +1,7 @@
 # Introduction
-`Quicksort.io` is a `node.js` framework for `http` and `socket.io` server application. It's simple, lightweight and familiar!
+`Sam.io` is a `node.js` framework for `http` and `socket.io` server application. It's simple, lightweight and familiar!
 
-`Quicksort.io framework` supports both experienced programmers and newbies to develop `node.js` application in a structured way and easy to maintain.
+`Sam.io framework` supports both experienced programmers and newbies to develop `node.js` application in a structured way and easy to maintain.
 
 It's used to build real-time applications, user activity tracking systems, chat applications and it's good for any web application project.
 
@@ -19,12 +19,18 @@ To get started, let's create a Controller to handler requests by creating new `h
     }
 
 ## 2. Routing
-Routing http requests to the above controller. Open `/start/routes.js` file and add the following route:
+Routing requests to the above controller. Open `/start/routes.js` file and add the following route:
 
     route.get("/", "HomeController@helloworld");
+    
+or without a controller:
+
+    route.get("/", function(io) {
+        io.echo("hello world");
+    });
 
 ## 3. Launching it
-Start the server:
+Start the app:
 
     node app.js 
 
@@ -33,13 +39,13 @@ and send a http request, then it should print out: "hello world"
     curl http://localhost:2307/
 
 # Installation
-`Quicksort.io` framework is easy to install:
+`sam.io` framework is easy to install:
 
-1. Cloning the project: `$ git clone https://github.com/megaads-vn/quicksort.io`
+1. Get the latest stable release of Sam.io : `$ npm install sam.io -g`
 
-2. Changing current directory to project directory: `$ cd quicksort.io`
-
-3. Installing dependencies: `$ npm install`
+2. Create a new application: `$ sam ini app-name`
+   
+3. Change current directory to the app directory: `$ cd app-name`
 
 4. Finally, let's start: `$ node app.js`
 

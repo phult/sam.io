@@ -1,34 +1,35 @@
 {
-    "name": "sam.io",
-    "description": "A lightweight and powerful node.js framework to build http and socket.io server application.",
-    "homepage": "https://github.com/phult/sam.io",
-    "author": "PhuLuong <phult.contact@gmail.com>",
-    "keywords": [
-        "framework",
-        "http",
-        "socket.io",
-        "mvc",
-        "lightweight",
-        "server",
-        "engine",
-        "real time",
-        "notification",
-        "chat",
-        "rest"
-    ],
-    "license": "MIT",
-    "version": "0.9.1",
-    "main": "app.js",
-    "contributors": [],
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/phult/sam.io"
-    },
-    "dependencies": {
-        "socket.io": "2.*",
-        "ejs": "2.*",
-        "lru-cache": "*",
-        "crypto": "*",
-        "url-pattern": "1.*"
-    }
+  "name": "sam.io",
+  "description": "A lightweight and powerful node.js framework to build http and socket.io server application.",
+  "homepage": "https://github.com/phult/sam.io",
+  "author": "PhuLuong <phult.contact@gmail.com>",
+  "keywords": [
+    "framework",
+    "http",
+    "socket.io",
+    "mvc",
+    "lightweight",
+    "server",
+    "engine",
+    "real time",
+    "notification",
+    "chat",
+    "rest"
+  ],
+  "license": "MIT",
+  "version": "0.9.1",
+  "contributors": [],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phult/sam.io"
+  },
+  "preferGlobal": true,
+  "bin": {
+    "sam": "./sam.js"
+  },
+  "dependencies": {
+    "commander": "^2.16.0",
+    "copy-dir": "^0.4.0",
+    "jsonfile": "^4.0.0"
+  }
 }

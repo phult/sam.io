@@ -49,7 +49,7 @@ function L4aLogger(obj, options) {
             outputDataStr = JSON.stringify(outputData);
         } catch (exc) {
         }
-        fs.appendFile(options.storage + "/quicksort.log", msg + " " + (outputData != "" ? outputDataStr : "") + " \r\n", function (err) {});
+        fs.appendFile(options.storage + "/sam.log", msg + " " + (outputData != "" ? outputDataStr : "") + " \r\n", function (err) {});
     }
 }
 L4aLogger.prototype = new Logger();
