@@ -10,7 +10,7 @@ var event = require(__dir + "/core/app/event");
 var UrlPattern = require("url-pattern");
 /** Classes **/
 function HttpConnection() {
-    this.methods = ["get", "post", "put", "delete"];
+    this.methods = ["get", "post", "put", "delete", "options"];
     this.requestCallbacks = [];
     this.assetAPI = null;
     this.init = function() {
