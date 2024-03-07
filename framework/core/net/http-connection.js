@@ -117,7 +117,9 @@ function HttpConnection() {
                 retval.fn = this.assetAPI;
             }
         } else {
-            retval.fn = this.requestCallbacks[method][url];
+            if (this.requestCallbacks[method] != null && this.requestCallbacks[method][url] != null) {
+                retval.fn = this.requestCallbacks[method][url];
+            }
             // Match url with params
             if (retval.fn == null) {
                 getCallbackWithRoutePattern(retval, url, this.requestCallbacks[method]);
